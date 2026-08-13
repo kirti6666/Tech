@@ -36,7 +36,7 @@ export function OrderSummary({
 
   if (!quote) {
     return (
-      <div className="card p-5">
+      <div className="card p-4 sm:p-5">
         <p className="label-muted">Working out your total…</p>
       </div>
     );
@@ -44,12 +44,12 @@ export function OrderSummary({
 
   return (
     <div className="card overflow-hidden">
-      <div className="panel-head border-b border-rule-soft">
-        <p className="label">Step 3</p>
-        <h2 className="mt-1 text-lg font-bold text-ink">Order summary</h2>
+      <div className="border-b border-rule-soft px-4 py-3 sm:px-5 sm:py-4">
+        <p className="label">Secure payment</p>
+        <h2 className="mt-0.5 text-lg font-bold text-ink">Payment summary</h2>
       </div>
 
-      <div className="space-y-2 p-5 text-sm">
+      <div className="space-y-1.5 p-4 text-sm sm:space-y-2 sm:p-5">
         <Row label="Products" value={formatPrice(quote.subtotal)} />
         {quote.addonTotal > 0 && (
           <Row label="Services" value={formatPrice(quote.addonTotal)} />
@@ -81,7 +81,7 @@ export function OrderSummary({
           )}
         </div>
 
-        <div className="flex items-baseline justify-between border-t border-rule pt-3">
+        <div className="flex items-baseline justify-between border-t border-rule pt-2.5 sm:pt-3">
           <span className="font-display text-base font-semibold text-ink">
             Total
           </span>
@@ -91,7 +91,7 @@ export function OrderSummary({
         </div>
       </div>
 
-      <div className="border-t border-rule p-4">
+      <div className="border-t border-rule p-3.5 sm:p-4">
         <label className="label-muted" htmlFor="coupon">
           Coupon code
         </label>

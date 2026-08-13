@@ -68,15 +68,15 @@ export function PurchasePanel({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-rule bg-white shadow-[0_18px_55px_rgba(31,38,78,0.12)] lg:sticky lg:top-6">
-      <div className="p-5 sm:p-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="font-display text-xl font-bold text-ink">Choose your package</h2>
+      <div className="p-3.5 sm:p-6">
+        <div className="mb-3 flex items-center justify-between gap-3 sm:mb-4">
+          <h2 className="font-display text-lg font-bold text-ink sm:text-xl">Choose your package</h2>
           <span className="rounded-full bg-save/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-save">
             One-time
           </span>
         </div>
 
-        <div className="space-y-3" role="radiogroup" aria-label="Product packages">
+        <div className="space-y-2 sm:space-y-3" role="radiogroup" aria-label="Product packages">
           {options.map((item) => {
             const active = selected.id === item.id;
             return (
@@ -89,7 +89,7 @@ export function PurchasePanel({
                   setSelectedId(item.id);
                   setAdded(false);
                 }}
-                className={`relative w-full rounded-xl border p-4 text-left transition ${
+                className={`relative w-full rounded-xl border p-3 text-left transition sm:p-4 ${
                   active
                     ? "border-accent bg-accent-mist/70 ring-2 ring-accent/20"
                     : "border-rule hover:border-accent/50"
@@ -101,25 +101,25 @@ export function PurchasePanel({
                   </span>
                 )}
                 <span className="flex items-start gap-3">
-                  <span className={`mt-1 h-4 w-4 shrink-0 rounded-full border-2 ${active ? "border-[5px] border-accent" : "border-ink-faint"}`} />
+                  <span className={`mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 sm:mt-1 ${active ? "border-[5px] border-accent" : "border-ink-faint"}`} />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-start justify-between gap-3">
                       <span>
                         <span className="block text-sm font-bold text-ink">{item.name}</span>
-                        <span className="mt-0.5 block text-xs leading-relaxed text-ink-soft">{item.description}</span>
+                        <span className="mt-0.5 hidden text-xs leading-relaxed text-ink-soft sm:block">{item.description}</span>
                       </span>
                       <span className="shrink-0 text-right">
                         {item.originalPrice && item.originalPrice > item.price && (
                           <span className="block text-xs text-ink-faint line-through">{formatPrice(item.originalPrice)}</span>
                         )}
-                        <span className="block text-lg font-bold text-save">{formatPrice(item.price)}</span>
+                        <span className="block text-base font-bold text-save sm:text-lg">{formatPrice(item.price)}</span>
                       </span>
                     </span>
-                    <span className="mt-3 flex flex-wrap gap-1.5">
+                    <span className="mt-2 flex flex-wrap gap-1 sm:mt-3 sm:gap-1.5">
                       {item.platforms.map((platform) => {
                         const Icon = /ai/i.test(platform) ? Sparkles : /android|ios|mobile/i.test(platform) ? Smartphone : Globe2;
                         return (
-                          <span key={platform} className="inline-flex items-center gap-1 rounded-md border border-rule bg-white px-2 py-1 text-[11px] font-semibold text-ink-soft">
+                          <span key={platform} className="inline-flex items-center gap-1 rounded-md border border-rule bg-white px-1.5 py-0.5 text-[10px] font-semibold text-ink-soft sm:px-2 sm:py-1 sm:text-[11px]">
                             <Icon size={12} /> {platform}
                           </span>
                         );
@@ -132,24 +132,24 @@ export function PurchasePanel({
           })}
         </div>
 
-        <div className="mt-5 space-y-2.5">
-          <button type="button" onClick={() => putInCart(true)} className="btn-primary w-full py-3.5 text-base">
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:block sm:space-y-2.5">
+          <button type="button" onClick={() => putInCart(true)} className="btn-primary w-full px-2 py-3 text-sm sm:py-3.5 sm:text-base">
             Buy now — {formatPrice(selected.price)}
           </button>
-          <button type="button" onClick={() => putInCart(false)} className="btn-secondary w-full py-3">
+          <button type="button" onClick={() => putInCart(false)} className="btn-secondary w-full px-2 py-3 text-sm">
             {added ? "Package added to cart" : "Add to cart"}
           </button>
         </div>
-        <p className="mt-3 text-center text-xs text-ink-faint">Plus GST. Secure checkout and GST invoice included.</p>
+        <p className="mt-2 text-center text-[11px] text-ink-faint sm:mt-3 sm:text-xs">Plus GST. Secure checkout and GST invoice included.</p>
       </div>
 
-      <div className="border-t border-rule bg-paper-alt/60 p-5 sm:p-6">
-        <p className="label-muted mb-3">Included in this package</p>
-        <ul className="space-y-2 text-sm text-ink-soft">
-          {(selected.features.length ? selected.features : included).slice(0, 6).map((item) => (
+      <div className="border-t border-rule bg-paper-alt/60 p-3.5 sm:p-6">
+        <p className="label-muted mb-2 sm:mb-3">Included in this package</p>
+        <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-ink-soft sm:block sm:space-y-2 sm:text-sm">
+          {(selected.features.length ? selected.features : included).slice(0, 4).map((item) => (
             <li key={item} className="flex gap-2">
-              <Check size={16} className="mt-0.5 shrink-0 text-save" />
-              <span>{item}</span>
+              <Check size={14} className="mt-0.5 shrink-0 text-save sm:h-4 sm:w-4" />
+              <span className="leading-snug">{item}</span>
             </li>
           ))}
         </ul>

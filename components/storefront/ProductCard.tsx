@@ -24,13 +24,13 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
   const overflow = product.techStack.length - chips.length;
 
   return (
-    <article className="group relative flex flex-col overflow-hidden card-interactive">
+    <article className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-rule bg-white shadow-sm transition hover:border-accent sm:rounded-2xl sm:shadow-none">
       <Link
         href={`/product/${product.slug}`}
         className="block focus:outline-none"
         aria-label={product.title}
       >
-        <div className="relative aspect-[16/10] overflow-hidden bg-paper-alt">
+        <div className="relative aspect-[4/3] overflow-hidden bg-paper-alt sm:aspect-[16/10]">
           {image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -44,23 +44,23 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
               No preview
             </div>
           )}
-          <span className="absolute left-3 top-3 rounded-md bg-paper/95 px-2.5 py-1 text-label font-medium uppercase tracking-[0.06em] text-ink-soft shadow-card backdrop-blur">
+          <span className="absolute left-1.5 top-1.5 max-w-[70%] truncate rounded-md bg-paper/95 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.04em] text-ink-soft shadow-card backdrop-blur sm:left-3 sm:top-3 sm:max-w-none sm:px-2.5 sm:py-1 sm:text-label sm:font-medium sm:tracking-[0.06em]">
             {PLATFORM_LABELS[product.platform]}
           </span>
           {saving !== null && (
-            <span className="absolute right-3 top-3 rounded-md bg-save px-2.5 py-1 text-label font-medium uppercase tracking-[0.06em] text-white shadow-card">
-              Save {saving}%
+            <span className="absolute right-1.5 top-1.5 rounded-md bg-save px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.04em] text-white shadow-card sm:right-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-label sm:font-medium sm:tracking-[0.06em]">
+              <span className="sm:hidden">−{saving}%</span><span className="hidden sm:inline">Save {saving}%</span>
             </span>
           )}
         </div>
       </Link>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-1.5 p-2.5 sm:gap-3 sm:p-4">
         <div>
           {product.industry && (
-            <p className="label-muted">{product.industry.name}</p>
+            <p className="truncate text-[9px] font-bold uppercase tracking-[0.08em] text-accent-deep sm:text-label sm:font-medium sm:tracking-[0.06em] sm:text-ink-faint">{product.industry.name}</p>
           )}
-          <h3 className="mt-1 font-display text-base font-semibold leading-snug text-ink">
+          <h3 className="mt-0.5 line-clamp-2 min-h-[2.4rem] font-display text-[13px] font-semibold leading-[1.2] text-ink sm:mt-1 sm:min-h-0 sm:text-base sm:leading-snug">
             {/* Stretched link: the whole card is clickable, but the chips
                 below sit above it in the stacking order and stay separately
                 clickable. */}
@@ -71,13 +71,13 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
               {product.title}
             </Link>
           </h3>
-          <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-ink-soft">
+          <p className="mt-1.5 hidden line-clamp-2 text-sm leading-relaxed text-ink-soft sm:block">
             {product.shortDescription}
           </p>
         </div>
 
         {chips.length > 0 && (
-          <div className="relative z-10 flex flex-wrap gap-1">
+          <div className="relative z-10 hidden flex-wrap gap-1 sm:flex">
             {chips.map((tech) => (
               <Link
                 key={tech._id}
@@ -93,12 +93,12 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
           </div>
         )}
 
-        <div className="mt-auto flex items-baseline gap-2 border-t border-rule-soft pt-3">
-          <span className="tabular text-lg font-medium text-ink tabular">
+        <div className="mt-auto flex min-w-0 flex-wrap items-baseline gap-x-1.5 border-t border-rule-soft pt-2 sm:gap-2 sm:pt-3">
+          <span className="tabular text-[15px] font-bold text-ink sm:text-lg sm:font-medium">
             {formatPrice(product.effectivePrice)}
           </span>
           {saving !== null && (
-            <span className="tabular text-sm text-ink-faint line-through tabular">
+            <span className="tabular text-[10px] text-ink-faint line-through sm:text-sm">
               {formatPrice(product.price)}
             </span>
           )}

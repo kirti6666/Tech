@@ -33,16 +33,16 @@ export function CartLines({
   busy?: boolean;
 }) {
   return (
-    <ul className="space-y-4">
+    <ul className="space-y-3 sm:space-y-4">
       {items.map((item) => (
         <li key={item.productId} className="card overflow-hidden">
-          <div className="flex gap-3 border-b border-rule-soft p-4 sm:gap-4 sm:p-5">
+          <div className="flex gap-2.5 border-b border-rule-soft p-3 sm:gap-4 sm:p-5">
             {item.image && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={item.image}
                 alt=""
-                className="h-14 w-20 shrink-0 rounded-lg object-cover object-top sm:h-20 sm:w-28"
+                className="h-12 w-16 shrink-0 rounded-lg object-cover object-top sm:h-20 sm:w-28"
               />
             )}
             <div className="min-w-0 flex-1">
@@ -71,9 +71,9 @@ export function CartLines({
           </div>
 
           {addons.length > 0 && (
-            <div className="bg-paper-alt/50 p-4 sm:p-5">
-              <p className="label-muted mb-2.5">Add a service</p>
-              <ul className="space-y-2.5">
+            <div className="bg-paper-alt/50 p-3 sm:p-5">
+              <p className="label-muted mb-2 sm:mb-2.5">Optional services</p>
+              <ul className="space-y-2 sm:space-y-2.5">
                 {addons.map((addon) => {
                   const checked = item.addons.includes(addon.type);
                   return (
@@ -95,7 +95,7 @@ export function CartLines({
                               + {formatPrice(addon.price)}
                             </span>
                           </span>
-                          <span className="mt-0.5 block text-xs leading-relaxed text-ink-soft">
+                          <span className="mt-0.5 hidden text-xs leading-relaxed text-ink-soft sm:block">
                             {addon.description}
                           </span>
                         </span>

@@ -49,19 +49,7 @@ export default async function ShopPage({
   ]);
 
   return (
-    <main className="mx-auto max-w-shell px-5 py-10 sm:px-6">
-      <header className="mb-8 max-w-2xl">
-        <p className="label-muted">Catalogue</p>
-        <h1 className="mt-1.5 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-          Software that already works
-        </h1>
-        <p className="mt-3 text-base leading-relaxed text-ink-soft">
-          Every product ships with complete source code, the database schema,
-          an installation guide and thirty days of setup support. Rebranding
-          and deployment can be added at checkout.
-        </p>
-      </header>
-
+    <main className="mx-auto max-w-shell px-3 py-3 sm:px-6 sm:py-8">
       <CatalogueShell
         industries={industries}
         technologies={technologies}

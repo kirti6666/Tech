@@ -17,20 +17,20 @@ export const metadata: Metadata = {
  */
 export default function CheckoutPage() {
   return (
-    <main className="mx-auto max-w-shell px-4 py-8 sm:px-6 sm:py-12">
+    <main className="mx-auto max-w-shell px-4 py-4 sm:px-6 sm:py-12">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
 
-      <header className="mb-8 border-b border-rule-soft pb-7">
+      <header className="mb-4 border-b border-rule-soft pb-4 sm:mb-8 sm:pb-7">
         <p className="label">Secure checkout</p>
-        <div className="mt-2 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div className="mt-1.5 flex flex-col justify-between gap-3 sm:mt-2 sm:gap-5 sm:flex-row sm:items-end">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-ink sm:text-4xl">Complete your purchase</h1>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">Review your product, enter invoice details and pay securely. Your licence is delivered after payment confirmation.</p>
+            <h1 className="text-2xl font-black tracking-tight text-ink sm:text-4xl">Complete your purchase</h1>
+            <p className="mt-1 max-w-xl text-xs leading-relaxed text-ink-soft sm:mt-2 sm:text-sm">Review your order, add invoice details and pay securely. Your licence is delivered after payment confirmation.</p>
           </div>
-          <ol className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-ink-faint" aria-label="Checkout steps">
-            <li className="rounded-full bg-accent-deep px-3 py-1.5 text-white">1 Review</li><li aria-hidden>→</li>
-            <li className="rounded-full bg-paper-alt px-3 py-1.5">2 Billing</li><li aria-hidden>→</li>
-            <li className="rounded-full bg-paper-alt px-3 py-1.5">3 Pay</li>
+          <ol className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-ink-faint sm:gap-2 sm:text-xs sm:tracking-wider" aria-label="Checkout steps">
+            <li className="rounded-full bg-accent-deep px-2.5 py-1 text-white sm:px-3 sm:py-1.5">1 Review</li><li aria-hidden>→</li>
+            <li className="rounded-full bg-paper-alt px-2.5 py-1 sm:px-3 sm:py-1.5">2 Billing</li><li aria-hidden>→</li>
+            <li className="rounded-full bg-paper-alt px-2.5 py-1 sm:px-3 sm:py-1.5">3 Pay</li>
           </ol>
         </div>
       </header>

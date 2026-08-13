@@ -80,36 +80,35 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
   };
 
   return (
-    <main className="mx-auto max-w-shell px-5 py-7 sm:px-6 sm:py-10">
+    <main className="mx-auto max-w-shell px-4 py-4 sm:px-6 sm:py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav aria-label="Breadcrumb" className="mb-7 flex flex-wrap gap-1.5 label-muted">
+      <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap gap-1.5 label-muted sm:mb-7">
         <Link href="/shop" className="hover:text-accent-deep">Shop</Link><span>/</span>
         {product.industry && <><Link href={`/industry/${product.industry.slug}`} className="hover:text-accent-deep">{product.industry.name}</Link><span>/</span></>}
         <span className="text-ink-soft">{product.title}</span>
       </nav>
 
-      <div className="grid items-start gap-9 lg:grid-cols-[minmax(0,1fr)_25rem] xl:gap-12">
-        <div className="min-w-0">
-          <header className="rounded-3xl bg-gradient-to-br from-accent-mist via-white to-sky-50 p-6 sm:p-9">
-            <div className="grid items-start gap-7 md:grid-cols-[minmax(0,1fr)_19.5rem] lg:grid-cols-[minmax(0,1fr)_17.5rem] xl:grid-cols-[minmax(0,1fr)_20.5rem]">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_25rem] lg:gap-x-9 lg:gap-y-0 xl:gap-x-12">
+          <header className="min-w-0 rounded-2xl bg-gradient-to-br from-accent-mist via-white to-sky-50 p-4 sm:rounded-3xl sm:p-9 lg:col-start-1 lg:row-start-1">
+            <div className="grid items-start gap-4 sm:gap-7 md:grid-cols-[minmax(0,1fr)_19.5rem] lg:grid-cols-[minmax(0,1fr)_17.5rem] xl:grid-cols-[minmax(0,1fr)_20.5rem]">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2"><span className="chip-neutral">{PLATFORM_LABELS[product.platform]}</span>{product.industry && <Link href={`/industry/${product.industry.slug}`} className="chip-link">{product.industry.name}</Link>}</div>
-                <h1 className="mt-5 max-w-3xl font-display text-4xl font-bold leading-[1.08] tracking-tight text-ink sm:text-5xl">{product.title}</h1>
-                <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-soft sm:text-lg">{product.shortDescription}</p>
-                <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
+                <h1 className="mt-3 max-w-3xl font-display text-2xl font-bold leading-[1.08] tracking-tight text-ink sm:mt-5 sm:text-5xl">{product.title}</h1>
+                <p className="mt-2 max-w-2xl text-sm leading-snug text-ink-soft sm:mt-4 sm:text-lg sm:leading-relaxed">{product.shortDescription}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs sm:mt-5 sm:text-sm">
                   <a href="#reviews" className="flex items-center gap-2 font-semibold text-ink"><span className="text-amber-500">★★★★★</span><span>{reviews.length ? `${average.toFixed(1)} (${reviews.length})` : "New product"}</span></a>
                   <span className="flex items-center gap-1.5 text-save"><BadgeCheck size={17} /> Verified buyer reviews</span>
                 </div>
               </div>
 
-              <div className="order-first overflow-hidden rounded-2xl border border-black/10 bg-white p-2 shadow-[0_16px_40px_rgba(40,51,94,0.16)] md:order-none">
+              <div className="order-first overflow-hidden rounded-xl border border-black/10 bg-white p-1.5 shadow-[0_12px_30px_rgba(40,51,94,0.14)] sm:rounded-2xl sm:p-2 md:order-none">
                 <div className="mb-2 flex items-center gap-1.5 px-1 pt-0.5" aria-hidden="true">
                   <span className="h-2 w-2 rounded-full bg-red-400" />
                   <span className="h-2 w-2 rounded-full bg-amber-400" />
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
                   <span className="ml-1 h-2 flex-1 rounded-full bg-rule-soft" />
                 </div>
-                <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-br from-accent via-violet-500 to-sky-400">
+                <div className="relative aspect-[16/8] overflow-hidden rounded-lg bg-gradient-to-br from-accent via-violet-500 to-sky-400 sm:aspect-[4/3] sm:rounded-xl">
                   {product.thumbnail || product.images?.[0] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={product.thumbnail || product.images[0]} alt={`${product.title} cover`} className="h-full w-full object-cover object-top" />
@@ -122,12 +121,15 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                 </div>
               </div>
             </div>
-            <div className="mt-7 grid gap-3 sm:grid-cols-3">
-              {[{ icon: Code2, title: "Editable source", text: "Own and customize the code" }, { icon: Zap, title: "Fast launch", text: "Deploy with included docs" }, { icon: LifeBuoy, title: "Setup support", text: "Help when you need it" }].map(({ icon: Icon, title, text }) => <div key={title} className="rounded-xl border border-white/80 bg-white/80 p-3.5"><Icon size={18} className="text-accent-deep" /><strong className="mt-2 block text-sm text-ink">{title}</strong><span className="text-xs text-ink-soft">{text}</span></div>)}
+            <div className="mt-4 grid grid-cols-3 gap-1.5 sm:mt-7 sm:gap-3">
+              {[{ icon: Code2, title: "Editable source", text: "Own and customize the code" }, { icon: Zap, title: "Fast launch", text: "Deploy with included docs" }, { icon: LifeBuoy, title: "Setup support", text: "Help when you need it" }].map(({ icon: Icon, title, text }) => <div key={title} className="rounded-lg border border-white/80 bg-white/80 p-2 sm:rounded-xl sm:p-3.5"><Icon size={16} className="text-accent-deep sm:h-[18px] sm:w-[18px]" /><strong className="mt-1 block text-[11px] leading-tight text-ink sm:mt-2 sm:text-sm">{title}</strong><span className="mt-0.5 hidden text-xs text-ink-soft sm:block">{text}</span></div>)}
             </div>
           </header>
 
-          <div className="mt-8"><DemoPanel demo={product.demo ?? {}} /></div>
+        <aside className="min-w-0 lg:col-start-2 lg:row-start-1 lg:row-span-2"><PurchasePanel productId={product._id} title={product.title} slug={product.slug} image={product.thumbnail || product.images?.[0]} price={product.price} discountPrice={product.discountPrice} packages={product.packages ?? []} included={product.included ?? []} /></aside>
+
+        <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+          <div className="mt-1 sm:mt-8"><DemoPanel demo={product.demo ?? {}} /></div>
 
           {product.features?.length > 0 && <section id="features" className="mt-10 scroll-mt-24">
             <p className="label-muted">What you can build</p><h2 className="mt-2 font-display text-3xl font-bold text-ink">Everything included in the product</h2>
@@ -140,8 +142,6 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
           <div className="mt-10"><StackTable techStack={product.techStack ?? []} requirements={product.requirements} /></div>
           {product.documentationUrl && <a href={product.documentationUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent-deep hover:underline">Read technical documentation <ExternalLink size={15} /></a>}
         </div>
-
-        <aside><PurchasePanel productId={product._id} title={product.title} slug={product.slug} image={product.thumbnail || product.images?.[0]} price={product.price} discountPrice={product.discountPrice} packages={product.packages ?? []} included={product.included ?? []} /></aside>
       </div>
 
       <div className="mt-14"><ReviewSection productId={product._id} reviews={reviews} average={average} signedIn={Boolean(user)} canReview={Boolean(canReview)} /></div>

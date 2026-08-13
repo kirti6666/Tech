@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { LockKeyhole, ShieldCheck } from "lucide-react";
 import { useCartStore, toQuoteItems } from "@/store/useCartStore";
 import { CartLines } from "@/components/storefront/checkout/CartLines";
 import {
@@ -179,8 +180,8 @@ export function CheckoutClient() {
   }
 
   return (
-    <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
-      <div className="min-w-0 space-y-6">
+    <div className="grid gap-4 sm:gap-7 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
+      <div className="order-2 min-w-0 space-y-4 sm:space-y-6 lg:order-1">
         {quote?.warnings.map((warning) => (
           <p
             key={warning}
@@ -201,7 +202,7 @@ export function CheckoutClient() {
         <BillingForm value={billing} errors={fieldErrors} onChange={setBilling} />
       </div>
 
-      <aside className="space-y-4 lg:sticky lg:top-24">
+      <aside className="order-1 space-y-3 lg:order-2 lg:sticky lg:top-24 lg:space-y-4">
         <OrderSummary
           quote={quote}
           couponCode={couponCode}
@@ -215,19 +216,21 @@ export function CheckoutClient() {
           </p>
         )}
 
-        <button
-          type="button"
-          onClick={placeOrder}
-          disabled={paying || quoting || !quote}
-          className="btn-primary min-h-12 w-full text-base disabled:opacity-60"
-        >
-          {paying ? "Opening payment…" : "Pay and get your licence"}
-        </button>
-
-        <p className="text-xs leading-relaxed text-ink-faint">
-          Your licence key and download link are emailed the moment payment
-          clears. A GST invoice is attached.
-        </p>
+        <div className="rounded-xl border border-rule bg-white p-3 shadow-sm sm:p-4">
+          <button
+            type="button"
+            onClick={placeOrder}
+            disabled={paying || quoting || !quote}
+            className="btn-primary min-h-11 w-full text-sm disabled:opacity-60 sm:min-h-12 sm:text-base"
+          >
+            <LockKeyhole size={16} />
+            {paying ? "Opening payment…" : "Pay securely and get licence"}
+          </button>
+          <div className="mt-2.5 flex items-start gap-2 text-[11px] leading-snug text-ink-faint sm:text-xs sm:leading-relaxed">
+            <ShieldCheck size={15} className="mt-0.5 shrink-0 text-save" />
+            <p>Secure payment. Licence, download access and GST invoice are sent after confirmation.</p>
+          </div>
+        </div>
       </aside>
     </div>
   );

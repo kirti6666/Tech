@@ -53,25 +53,25 @@ export function CatalogueToolbar({ params, total, labels, locked, onOpenFilters 
   }
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-2xl border border-rule bg-white p-2.5 shadow-card sm:p-3">
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
-          <form onSubmit={submitSearch} className="flex min-w-0 flex-1 items-center rounded-xl border border-rule bg-paper-alt/50 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/10">
-            <Search className="ml-3 h-4 w-4 shrink-0 text-accent-deep" aria-hidden="true" />
-            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products, industries or features" aria-label="Search products" className="min-w-0 flex-1 border-0 bg-transparent px-2.5 py-3 text-sm text-ink outline-none placeholder:text-ink-faint" />
-            <button type="submit" className="mr-1 rounded-lg bg-ink px-4 py-2 text-sm font-bold text-white transition hover:bg-accent-deep">Search</button>
+    <div className="space-y-3 sm:space-y-4">
+      <div className="rounded-xl border border-rule bg-white p-2 shadow-card sm:rounded-2xl sm:p-3">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2.5">
+          <form onSubmit={submitSearch} className="col-span-2 flex min-w-0 flex-1 items-center rounded-xl border border-rule bg-paper-alt/50 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/10">
+            <Search className="ml-2.5 h-4 w-4 shrink-0 text-accent-deep sm:ml-3" aria-hidden="true" />
+            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" className="min-w-0 flex-1 border-0 bg-transparent px-1.5 py-2.5 text-[13px] text-ink outline-none placeholder:text-ink-faint sm:px-2.5 sm:py-3 sm:text-sm" />
+            <button type="submit" aria-label="Search products" className="mr-1 shrink-0 rounded-lg bg-ink px-3 py-1.5 text-xs font-bold text-white transition hover:bg-accent-deep sm:px-4 sm:py-2 sm:text-sm"><span className="sm:hidden">Go</span><span className="hidden sm:inline">Search</span></button>
           </form>
-          {onOpenFilters && <button type="button" onClick={onOpenFilters} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-accent/30 bg-accent-mist px-4 text-sm font-bold text-accent-deep lg:hidden"><SlidersHorizontal size={16} /> Filters{chips.length ? ` (${chips.length})` : ""}</button>}
-          <label className="flex min-h-11 items-center gap-2 rounded-xl border border-rule bg-white px-3">
+          {onOpenFilters && <button type="button" onClick={onOpenFilters} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-accent/30 bg-accent-mist px-3 text-xs font-bold text-accent-deep sm:min-h-11 sm:gap-2 sm:px-4 sm:text-sm lg:hidden"><SlidersHorizontal size={15} /> Filters{chips.length ? ` (${chips.length})` : ""}</button>}
+          <label className="flex min-h-10 min-w-0 items-center gap-1.5 rounded-xl border border-rule bg-white px-2.5 sm:min-h-11 sm:gap-2 sm:px-3">
             <ArrowUpDown size={15} className="text-ink-faint" aria-hidden="true" /><span className="sr-only">Sort products</span>
-            <select value={params.sort} onChange={(event) => commit((next) => event.target.value === "newest" ? next.delete("sort") : next.set("sort", event.target.value))} className="w-full border-0 bg-transparent py-2 text-sm font-semibold text-ink outline-none">
+            <select value={params.sort} onChange={(event) => commit((next) => event.target.value === "newest" ? next.delete("sort") : next.set("sort", event.target.value))} className="min-w-0 w-full border-0 bg-transparent py-2 text-xs font-semibold text-ink outline-none sm:text-sm">
               {SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
           </label>
         </div>
       </div>
 
-      <div className="flex min-h-9 flex-wrap items-center gap-2 border-b border-rule pb-3">
+      <div className="flex min-h-7 flex-wrap items-center gap-1.5 border-b border-rule pb-2 sm:min-h-9 sm:gap-2 sm:pb-3">
         <p className="text-label font-medium uppercase tracking-[0.06em] text-ink-faint tabular" aria-live="polite">{isPending ? "Updating…" : `${total} ${total === 1 ? "product" : "products"}`}</p>
         {chips.map((chip) => <button key={chip.key} type="button" onClick={chip.onRemove} className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent-mist px-3 py-1.5 text-xs font-semibold text-accent-deep transition hover:border-accent">{chip.label}<X size={13} aria-hidden="true" /><span className="sr-only">Remove filter</span></button>)}
       </div>
