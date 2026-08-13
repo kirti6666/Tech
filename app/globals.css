@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #18181b;
+  --primary: #6d28d9;
+  --primary-foreground: #ffffff;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@layer base {
+  /* Tabular figures everywhere a number can sit above another number.
+     Without it ₹89,999 and ₹1,13,279 visibly stagger in a total column. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  :focus-visible {
+    outline: 2px solid theme("colors.accent.deep");
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* The wordmark. Italic Cormorant at display size is the one place the
+     serif gets to be the whole idea. */
+  .logotype {
+    @apply font-display text-[1.4rem] font-extrabold leading-none tracking-tight text-ink;
+  }
+
+  /* Section eyebrow. Inter, not the serif — at 12px Cormorant's hairlines
+     disappear. Uppercase with generous tracking does the elegant work
+     instead. */
+  .label {
+    @apply text-label font-medium uppercase tracking-[0.06em] text-accent-deep;
+  }
+
+  .label-muted {
+    @apply text-label font-medium uppercase tracking-[0.06em] text-ink-faint;
+  }
+
+  /* Card: white on lavender, soft wide shadow, no visible border by default.
+     Separation comes from tone and elevation rather than from lines. */
+  .card {
+    @apply rounded-xl bg-paper shadow-card ring-1 ring-rule-soft;
+  }
+
+  .card-interactive {
+    @apply card transition-all duration-200 hover:shadow-lift hover:ring-rule-lavender;
+  }
+
+  /* Panel header — lavender ground instead of a rule. */
+  .panel-head {
+    @apply rounded-t-xl bg-paper-alt px-5 py-3;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-55;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent-cta text-white shadow-accent hover:brightness-[1.07];
+  }
+
+  .btn-secondary {
+    @apply btn bg-paper text-ink ring-1 ring-rule hover:bg-paper-alt hover:ring-rule-lavender;
+  }
+
+  .btn-quiet {
+    @apply btn text-accent-deep hover:bg-accent-mist;
+  }
+
+  .btn-danger {
+    @apply btn bg-paper text-red-700 ring-1 ring-red-200 hover:bg-red-50;
+  }
+
+  /* Tag. Lavender fill, deep purple text — the pairing that passes contrast. */
+  .chip {
+    @apply inline-flex items-center rounded-md bg-accent-mist px-2.5 py-1 text-xs font-medium text-accent-deep;
+  }
+
+  .chip-link {
+    @apply chip transition-colors hover:bg-accent-wash;
+  }
+
+  .chip-neutral {
+    @apply inline-flex items-center rounded-md bg-rule-soft px-2.5 py-1 text-xs font-medium text-ink-soft;
+  }
+
+  .field {
+    @apply w-full rounded-lg bg-paper px-3.5 py-2.5 text-sm text-ink ring-1 ring-rule transition-shadow placeholder:text-ink-ghost focus:ring-2 focus:ring-accent;
+  }
+
+  .field-error {
+    @apply ring-2 ring-red-300 focus:ring-red-400;
+  }
+}
