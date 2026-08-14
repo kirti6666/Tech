@@ -5,6 +5,7 @@ import { Header } from "@/components/storefront/Header";
 import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { SiteStructuredData } from "@/components/storefront/SiteStructuredData";
 import { Analytics } from "@/components/Analytics";
+import { WhatsAppButton } from "@/components/storefront/WhatsAppButton";
 import { fontVariables } from "@/lib/fonts";
 import { getSiteSettings } from "@/lib/site-settings";
 
@@ -73,6 +74,7 @@ export default async function RootLayout({
           <Header />
           <div className="flex-1">{children}</div>
           <SiteFooter />
+          <WhatsAppButton />
         </Providers>
         <Analytics />
       </body>

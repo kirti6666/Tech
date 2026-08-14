@@ -1,14 +1,15 @@
 import nodemailer from "nodemailer";
 
 function getTransport() {
-  if (!process.env.EMAIL_SERVER_HOST) return null;
+  const host = process.env.EMAIL_SERVER_HOST ?? process.env.SMTP_HOST;
+  if (!host) return null;
   return nodemailer.createTransport({
-    host: process.env.EMAIL_SERVER_HOST,
-    port: Number(process.env.EMAIL_SERVER_PORT ?? 587),
-    secure: false,
+    host,
+    port: Number(process.env.EMAIL_SERVER_PORT ?? process.env.SMTP_PORT ?? 587),
+    secure: Number(process.env.EMAIL_SERVER_PORT ?? process.env.SMTP_PORT ?? 587) === 465,
     auth: {
-      user: process.env.EMAIL_SERVER_USER,
-      pass: process.env.EMAIL_SERVER_PASSWORD,
+      user: process.env.EMAIL_SERVER_USER ?? process.env.SMTP_USER,
+      pass: process.env.EMAIL_SERVER_PASSWORD ?? process.env.SMTP_PASSWORD,
     },
   });
 }
@@ -17,6 +18,11 @@ interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
+  attachments?: { filename: string; content: string; contentType?: string }[];
+}
+
+export function isEmailConfigured(): boolean {
+  return Boolean(process.env.EMAIL_SERVER_HOST ?? process.env.SMTP_HOST);
 }
 
 /**
@@ -24,12 +30,12 @@ interface SendEmailParams {
  * Email failures should never break the order flow they're attached to —
  * callers don't need to (and shouldn't) await-and-fail on this.
  */
-export async function sendEmail({ to, subject, html }: SendEmailParams): Promise<void> {
+export async function sendEmail({ to, subject, html, attachments }: SendEmailParams): Promise<boolean> {
   const transport = getTransport();
 
   if (!transport) {
     console.warn(`[email] SMTP not configured — skipping "${subject}" to ${to}`);
-    return;
+    return false;
   }
 
   try {
@@ -38,8 +44,11 @@ export async function sendEmail({ to, subject, html }: SendEmailParams): Promise
       to,
       subject,
       html,
+      attachments,
     });
+    return true;
   } catch (err) {
     console.error("[email] Failed to send:", err);
+    return false;
   }
 }

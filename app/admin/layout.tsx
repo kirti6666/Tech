@@ -4,6 +4,7 @@ import { getServerUser } from "@/lib/middleware/getServerUser";
 import { connectDB } from "@/lib/db";
 import ServiceRequest from "@/models/ServiceRequest";
 import Enquiry from "@/models/Enquiry";
+import Appointment from "@/models/Appointment";
 import { AdminNav } from "@/components/admin/AdminNav";
 
 export const dynamic = "force-dynamic";
@@ -35,9 +36,10 @@ export default async function AdminLayout({
   // whole reason an operator opens the panel — surfacing it in the sidebar
   // saves clicking into two screens to discover there's nothing to do.
   await connectDB();
-  const [openServices, newEnquiries] = await Promise.all([
+  const [openServices, newEnquiries, upcomingAppointments] = await Promise.all([
     ServiceRequest.countDocuments({ status: { $in: ["pending", "in_progress"] } }),
     Enquiry.countDocuments({ status: "new" }),
+    Appointment.countDocuments({ status: "confirmed", startAt: { $gte: new Date() } }),
   ]);
 
   return (
@@ -54,6 +56,7 @@ export default async function AdminLayout({
               counts={{
                 "/admin/services": openServices,
                 "/admin/enquiries": newEnquiries,
+                "/admin/appointments": upcomingAppointments,
               }}
             />
 
@@ -85,6 +88,7 @@ export default async function AdminLayout({
               counts={{
                 "/admin/services": openServices,
                 "/admin/enquiries": newEnquiries,
+                "/admin/appointments": upcomingAppointments,
               }}
               mobile
             />

@@ -8,6 +8,7 @@ import { LogoutButton } from "./LogoutButton";
 const primaryLinks = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
+  { href: "/book-consultation", label: "Book a call" },
 ];
 
 export async function Header() {

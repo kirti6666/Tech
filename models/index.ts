@@ -7,6 +7,7 @@ export { default as License } from "./License";
 export { default as DownloadLog } from "./DownloadLog";
 export { default as ServiceRequest } from "./ServiceRequest";
 export { default as Enquiry } from "./Enquiry";
+export { default as Appointment } from "./Appointment";
 export { default as Coupon } from "./Coupon";
 export { default as Invoice } from "./Invoice";
 export { default as InvoiceSettings } from "./InvoiceSettings";
