@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
+import Link from "next/link";
 
 const INDUSTRIES = [
   ["fintech", "FinTech"],
@@ -11,6 +12,14 @@ const INDUSTRIES = [
   ["real-estate", "Real Estate"],
   ["food-restaurant", "Food & Restaurant"],
   ["hr-recruitment", "HR & Recruitment"],
+] as const;
+
+const POPULAR_SEARCHES = [
+  "Clinic management",
+  "Delivery app",
+  "School ERP",
+  "Real estate CRM",
+  "AI chatbot",
 ] as const;
 
 export function HomeCatalogueSearch() {
@@ -27,8 +36,9 @@ export function HomeCatalogueSearch() {
   }
 
   return (
-    <form ref={formRef} action="/shop" method="get" className="relative mx-auto max-w-4xl">
-      <div className="flex items-center gap-2 rounded-2xl border border-violet-200 bg-white p-2 shadow-[0_16px_45px_rgba(76,29,149,0.12)] sm:p-2.5">
+    <div className="mx-auto max-w-4xl">
+    <form ref={formRef} action="/shop" method="get" className="relative">
+      <div className="flex items-center gap-2 rounded-2xl border border-rule bg-white p-2 shadow-[0_16px_45px_rgba(8,26,58,0.14)] sm:p-2.5">
         <Search className="ml-2 h-5 w-5 shrink-0 text-accent-deep" aria-hidden="true" />
         <input name="q" type="search" placeholder="Search websites, apps or business software" aria-label="Search products" className="min-w-0 flex-1 border-0 bg-transparent px-1 py-2.5 text-sm text-ink outline-none placeholder:text-ink-faint sm:text-base" />
         <button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} className={`hidden min-h-11 items-center gap-2 rounded-xl border px-4 text-sm font-bold transition sm:inline-flex ${open ? "border-accent bg-accent-mist text-accent-deep" : "border-rule bg-white text-ink hover:border-accent"}`}>
@@ -56,5 +66,24 @@ export function HomeCatalogueSearch() {
         </div>
       )}
     </form>
+
+      <nav
+        className="mx-auto mt-3 flex flex-wrap items-center justify-center gap-2 px-1 pb-1 sm:mt-4"
+        aria-label="Popular product searches"
+      >
+        <span className="shrink-0 pr-1 font-sans text-xs font-semibold text-accent-deep sm:text-sm">
+          Popular
+        </span>
+        {POPULAR_SEARCHES.map((term) => (
+          <Link
+            key={term}
+            href={`/shop?q=${encodeURIComponent(term)}`}
+            className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-ink-soft shadow-sm ring-1 ring-rule transition hover:-translate-y-0.5 hover:bg-accent-mist hover:text-accent-deep hover:ring-blue-300 sm:px-4 sm:py-2 sm:text-xs"
+          >
+            {term}
+          </Link>
+        ))}
+      </nav>
+    </div>
   );
 }

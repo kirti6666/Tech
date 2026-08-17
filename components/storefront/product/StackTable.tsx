@@ -45,16 +45,16 @@ export function StackTable({
   if (rows.length === 0 && requirementRows.length === 0) return null;
 
   return (
-    <section className="border border-rule">
-      <h2 className="border-b border-rule bg-paper-alt px-4 py-2 label-muted">
+    <section className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-rule bg-rule-soft">
+      <h2 className="bg-paper-alt px-4 py-2.5 label-muted">
         Technical specification
       </h2>
 
-      <dl className="divide-y divide-rule-soft">
+      <dl className="grid gap-px sm:grid-cols-2 xl:grid-cols-3">
         {rows.map((category) => (
           <div
             key={category}
-            className="grid grid-cols-[7rem_1fr] items-baseline gap-3 px-4 py-3"
+            className="grid min-h-12 grid-cols-[5.5rem_1fr] items-center gap-2 bg-white px-4 py-2.5"
           >
             <dt className="label-muted">{TECH_CATEGORY_LABELS[category]}</dt>
             <dd className="flex flex-wrap gap-1.5">
@@ -74,7 +74,7 @@ export function StackTable({
         {requirementRows.map((row) => (
           <div
             key={row.label}
-            className="grid grid-cols-[7rem_1fr] items-baseline gap-3 px-4 py-3"
+            className="grid min-h-12 grid-cols-[5.5rem_1fr] items-center gap-2 bg-white px-4 py-2.5"
           >
             <dt className="label-muted">{row.label}</dt>
             <dd className="tabular text-sm text-ink-soft">{row.value}</dd>

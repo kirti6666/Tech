@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/storefront/SiteFooter";
 import { SiteStructuredData } from "@/components/storefront/SiteStructuredData";
 import { Analytics } from "@/components/Analytics";
 import { WhatsAppButton } from "@/components/storefront/WhatsAppButton";
+import { PartnerWelcomeModal } from "@/components/storefront/PartnerWelcomeModal";
+import { AnnouncementBar } from "@/components/storefront/AnnouncementBar";
 import { fontVariables } from "@/lib/fonts";
 import { getSiteSettings } from "@/lib/site-settings";
 
@@ -71,10 +73,12 @@ export default async function RootLayout({
       <body className="flex min-h-screen flex-col bg-paper font-sans text-ink">
         <SiteStructuredData />
         <Providers>
+          <AnnouncementBar />
           <Header />
           <div className="flex-1">{children}</div>
           <SiteFooter />
           <WhatsAppButton />
+          <PartnerWelcomeModal />
         </Providers>
         <Analytics />
       </body>

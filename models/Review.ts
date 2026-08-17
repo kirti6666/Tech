@@ -6,6 +6,7 @@ export interface IReview {
   user: mongoose.Types.ObjectId;
   rating: number;
   comment: string;
+  avatar?: string;
   verifiedPurchase: boolean;
   status: "published" | "hidden";
   createdAt: Date;
@@ -18,6 +19,7 @@ const ReviewSchema = new Schema<IReview>(
     user: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     comment: { type: String, trim: true, maxlength: 2000, default: "" },
+    avatar: { type: String, trim: true },
     verifiedPurchase: { type: Boolean, default: true },
     status: { type: String, enum: ["published", "hidden"], default: "published", index: true },
   },

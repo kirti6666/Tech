@@ -50,6 +50,9 @@ export interface IProduct {
     adminUrl?: string;
     adminUser?: string;
     adminPass?: string;
+    appStoreUrl?: string;
+    playStoreUrl?: string;
+    workflowVideoUrl?: string;
   };
   requirements: {
     server?: string;
@@ -129,6 +132,9 @@ const ProductSchema = new Schema<IProduct>(
       adminUser: { type: String },
       // Public by design — demo-only credential, never reused elsewhere.
       adminPass: { type: String },
+      appStoreUrl: { type: String },
+      playStoreUrl: { type: String },
+      workflowVideoUrl: { type: String },
     },
     requirements: {
       server: { type: String },

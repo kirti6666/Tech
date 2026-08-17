@@ -71,10 +71,10 @@ export function ServiceIntakeForm({
 
       {hasSecrets && (
         <p className="rounded-lg bg-paper-alt px-4 py-3 text-xs leading-relaxed text-ink-soft">
-          Credentials are encrypted before they're stored, only visible to the
+          Credentials are encrypted before they’re stored, only visible to the
           engineer doing your deployment, and deleted seven days after
           handover. Create a temporary account for us if you can, and remove
-          it once we're done.
+          it once we’re done.
         </p>
       )}
 

@@ -14,7 +14,10 @@ export interface AppointmentSlot {
   available: boolean;
 }
 
-const SLOT_TIMES = Array.from({ length: 16 }, (_, index) => {
+// Half-hour calls from 10:00 AM through 8:30 PM. Keeping evening slots in
+// the same list means someone visiting later in the day can still book the
+// remaining part of today instead of being forced to choose tomorrow.
+const SLOT_TIMES = Array.from({ length: 22 }, (_, index) => {
   const minutes = 10 * 60 + index * APPOINTMENT_DURATION_MINUTES;
   const hour = Math.floor(minutes / 60);
   const minute = minutes % 60;
@@ -45,16 +48,13 @@ export function isBookableDate(dateKey: string, now = new Date()): boolean {
   const start = appointmentStart(dateKey, "00:00");
   if (Number.isNaN(start.getTime())) return false;
 
-  const tomorrow = new Date(now.getTime() + 24 * 60 * 60_000);
-  const max = new Date(now.getTime() + 31 * 24 * 60 * 60_000);
-  // Noon in India falls on the same UTC calendar date. Midnight does not,
-  // which would incorrectly classify Mondays as Sundays.
-  const day = appointmentStart(dateKey, "12:00").getUTCDay();
-  return dateKey >= dateKeyInIndia(tomorrow) && start <= max && day !== 0 && day !== 6;
+  const max = new Date(now.getTime() + 6 * 24 * 60 * 60_000);
+  return dateKey >= dateKeyInIndia(now) && dateKey <= dateKeyInIndia(max);
 }
 
-export function availableSlots(dateKey: string, booked: Date[]): AppointmentSlot[] {
+export function availableSlots(dateKey: string, booked: Date[], now = new Date()): AppointmentSlot[] {
   const bookedTimes = new Set(booked.map((date) => date.getTime()));
+  const earliestStart = now.getTime() + 15 * 60_000;
   return SLOT_TIMES.map((time) => {
     const start = appointmentStart(dateKey, time);
     return {
@@ -65,7 +65,7 @@ export function availableSlots(dateKey: string, booked: Date[]): AppointmentSlot
         hour12: true,
         timeZone: APPOINTMENT_TIMEZONE,
       }).format(start),
-      available: !bookedTimes.has(start.getTime()),
+      available: start.getTime() >= earliestStart && !bookedTimes.has(start.getTime()),
     };
   });
 }

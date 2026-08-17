@@ -39,29 +39,29 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <div className="w-full max-w-sm space-y-6">
-        <h1 className="text-2xl font-bold">Log in</h1>
+    <main className="flex min-h-[70vh] items-center justify-center bg-gradient-to-b from-blue-50/60 to-white px-3 py-8 sm:px-6">
+      <div className="w-full max-w-sm rounded-2xl border border-blue-100 bg-white p-4 shadow-lift sm:p-6">
+        <div className="text-center"><p className="label-muted">Welcome back</p><h1 className="mt-1 font-display text-2xl font-black tracking-tight text-ink">Log in to TechBro</h1><p className="mt-1.5 text-sm text-ink-soft">Access your purchases, services and account.</p></div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="mt-5 space-y-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="label-muted mb-1 block">Email</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border px-3 py-2"
+              className="field h-10"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label className="label-muted mb-1 block">Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border px-3 py-2"
+              className="field h-10"
             />
           </div>
 
@@ -70,27 +70,27 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-primary text-primary-foreground py-2 font-medium disabled:opacity-50"
+            className="btn-primary h-11 w-full disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
 
-        <div className="relative text-center text-sm text-gray-400">
+        <div className="relative my-4 text-center text-xs text-ink-faint">
           <span className="bg-white px-2 relative z-10">or</span>
           <div className="absolute inset-x-0 top-1/2 border-t" />
         </div>
 
         <button
           onClick={() => signIn("google", { callbackUrl: "/account" })}
-          className="w-full rounded-md border py-2 font-medium"
+          className="btn-secondary h-11 w-full font-semibold"
         >
           Continue with Google
         </button>
 
-        <p className="text-sm text-center text-gray-500">
+        <p className="mt-4 text-center text-sm text-ink-soft">
           Don&apos;t have an account?{" "}
-          <a href="/register" className="underline">
+          <a href="/register" className="font-semibold text-accent-deep hover:underline">
             Register
           </a>
         </p>

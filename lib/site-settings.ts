@@ -63,6 +63,7 @@ export interface SiteSettingsData {
     };
     categoriesHeading: string;
     featuredHeading: string;
+    trustedBrands: string[];
     highlights: Highlight[];
     banners: Banner[];
   };
@@ -131,6 +132,16 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
     },
     categoriesHeading: "Shop by Category",
     featuredHeading: "Featured Products",
+    trustedBrands: [
+      "BluePeak Realty",
+      "Northfield School Group",
+      "Kavya Foods Co.",
+      "Sundara Travels",
+      "Ridgeline HR",
+      "Vantara Logistics",
+      "Meridian Health",
+      "Orbit FinTech",
+    ],
     highlights: [
       { icon: "Truck", title: "Fast Shipping", subtitle: "On all orders" },
       { icon: "ShieldCheck", title: "Secure Payments", subtitle: "Razorpay protected" },

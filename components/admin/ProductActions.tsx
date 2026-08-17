@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, X } from "lucide-react";
+import { adminFetch } from "@/lib/adminFetch";
 
 export function ProductActions({ productId, productTitle, soldCount = 0, editOnly = false }: {
   productId: string;
@@ -20,7 +21,7 @@ export function ProductActions({ productId, productTitle, soldCount = 0, editOnl
     setBusy(true);
     setError("");
     try {
-      const response = await fetch(`/api/admin/products/${productId}`, { method: "DELETE" });
+      const response = await adminFetch(`/api/admin/products/${productId}`, { method: "DELETE" });
       const data = await response.json();
       if (!response.ok) {
         setError(data.error ?? "Could not delete this product.");

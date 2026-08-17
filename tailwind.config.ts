@@ -1,22 +1,11 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Design direction: premium, white-dominant, lavender-tinted.
+ * Design direction: premium, white-dominant, midnight blue with gold details.
  *
- * White carries roughly 70% of every screen. Lavender does the work borders
- * used to — panel headers, section grounds, hover states — so the interface
- * separates by tone rather than by lines. Purple appears only on things you
- * can act on.
- *
- * TWO PURPLES, DELIBERATELY:
- *   accent      #8B5CF6 — fills, buttons, large elements
- *   accent-deep #6D28D9 — links, small text, icons
- *
- * #8B5CF6 on white measures about 3.4:1, which fails WCAG AA for body text.
- * On a 13px label it would look right to a designer on a good monitor and be
- * unreadable to a customer with mild low vision. #6D28D9 measures about
- * 6.5:1 and passes comfortably. Rule of thumb: `accent` when the purple IS
- * the background, `accent-deep` when the purple is the text.
+ * White carries most screens, navy provides readable type and strong actions,
+ * and gold is reserved for premium emphasis. Pale blue separates panels by
+ * tone without making the interface feel busy.
  */
 
 const config: Config = {
@@ -30,32 +19,39 @@ const config: Config = {
           foreground: "var(--primary-foreground)",
         },
         ink: {
-          DEFAULT: "#18181B",
-          soft: "#52525B",
-          faint: "#71717A",
-          ghost: "#A1A1AA",
+          DEFAULT: "#081A3A",
+          soft: "#40506A",
+          faint: "#66758D",
+          ghost: "#98A4B7",
         },
         paper: {
           DEFAULT: "#FFFFFF",
-          alt: "#F5F3FF",
-          deep: "#EDE9FE",
+          alt: "#F7FAFF",
+          deep: "#EAF2FC",
         },
         rule: {
-          DEFAULT: "#E4E4E7",
-          soft: "#F4F4F5",
-          lavender: "#DDD6FE",
+          DEFAULT: "#DCE6F3",
+          soft: "#EEF4FA",
+          lavender: "#C8D8EC",
         },
         accent: {
-          DEFAULT: "#8B5CF6",
-          deep: "#6D28D9",
-          hover: "#7C3AED",
-          wash: "#EDE9FE",
-          mist: "#F5F3FF",
+          DEFAULT: "#123B78",
+          deep: "#071A3D",
+          hover: "#0D2F64",
+          wash: "#E8F1FF",
+          mist: "#F3F7FD",
+        },
+        gold: {
+          DEFAULT: "#F5B800",
+          deep: "#996300",
+          soft: "#FFF1B8",
+          pale: "#FFFAE8",
         },
         save: "#059669",
         warn: "#B45309",
       },
       fontFamily: {
+        brand: ["var(--font-brand)", "Georgia", "serif"],
         display: ["var(--font-display)", "Arial", "sans-serif"],
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
@@ -72,14 +68,14 @@ const config: Config = {
         "2xl": "1.5rem",
       },
       boxShadow: {
-        card: "0 1px 2px rgba(24,24,27,0.04), 0 8px 24px -12px rgba(24,24,27,0.10)",
-        lift: "0 2px 4px rgba(24,24,27,0.04), 0 16px 40px -16px rgba(109,40,217,0.18)",
-        accent: "0 8px 24px -10px rgba(139,92,246,0.45)",
+        card: "0 1px 2px rgba(8,26,58,0.03), 0 12px 34px -22px rgba(8,26,58,0.22)",
+        lift: "0 8px 34px -18px rgba(8,26,58,0.24)",
+        accent: "0 10px 28px -12px rgba(7,26,61,0.50)",
       },
       backgroundImage: {
-        "lavender-fade": "linear-gradient(180deg, #F5F3FF 0%, #FFFFFF 100%)",
-        "lavender-soft": "linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)",
-        "accent-cta": "linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)",
+        "lavender-fade": "linear-gradient(180deg, #F2F6FB 0%, #FFFFFF 100%)",
+        "lavender-soft": "linear-gradient(135deg, #F6F8FC 0%, #E7EEF8 100%)",
+        "accent-cta": "linear-gradient(135deg, #123B78 0%, #071A3D 100%)",
       },
       maxWidth: { shell: "78rem" },
     },

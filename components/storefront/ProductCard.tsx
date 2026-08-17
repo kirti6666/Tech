@@ -24,7 +24,7 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
   const overflow = product.techStack.length - chips.length;
 
   return (
-    <article className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-rule bg-white shadow-sm transition hover:border-accent sm:rounded-2xl sm:shadow-none">
+    <article className="group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/80 bg-white/90 shadow-card backdrop-blur-sm transition-all duration-500 ease-out hover:-translate-y-1 hover:border-blue-200 hover:shadow-lift sm:rounded-3xl">
       <Link
         href={`/product/${product.slug}`}
         className="block focus:outline-none"
@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: CatalogueProduct }) {
               src={image}
               alt=""
               loading="lazy"
-              className="h-full w-full object-cover object-top"
+              className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.025]"
             />
           ) : (
             <div className="flex h-full items-center justify-center label-muted">

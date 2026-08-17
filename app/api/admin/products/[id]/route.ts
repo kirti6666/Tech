@@ -12,17 +12,13 @@ import { validateProduct, type ProductInput } from "@/lib/validateProduct";
  * PATCH  /api/admin/products/[id]
  * DELETE /api/admin/products/[id]
  *
- * Two gates on publishing, both refusals rather than warnings:
- *
- *   1. No source archive → you'd be selling a download that 404s. The
- *      customer finds out after paying.
- *   2. Not built in-house and no right-to-resell document → the schema hook
+ * Publishing is blocked when a product was not built in-house and has no
+ * right-to-resell document. The schema hook
  *      from Phase 1 rejects it anyway; catching it here means a useful
  *      message instead of a raw validation error.
  *
  * Deleting is refused outright once a licence exists. Someone paid for that
- * product, their licence points at it, and their download resolves the
- * source key through it. Unpublish instead — it leaves the catalogue and
+ * product and their licence points at it. Unpublish instead — it leaves the catalogue and
  * every existing customer keeps working.
  */
 
@@ -82,18 +78,6 @@ export async function PATCH(
     const goingLive = input.status === "published" && product.status !== "published";
 
     if (goingLive) {
-      const sourceKey = product.sourceFileKey;
-      if (!sourceKey) {
-        return NextResponse.json(
-          {
-            error:
-              "Upload the source archive before publishing — without it, anyone who buys this gets a download that fails.",
-            fields: { status: "No source file attached" },
-          },
-          { status: 400 }
-        );
-      }
-
       const provenance = input.provenance ?? product.provenance;
       const doc = input.provenanceDocKey ?? product.provenanceDocKey;
       if (provenance !== "in_house" && !doc) {

@@ -5,7 +5,9 @@ import { connectDB } from "@/lib/db";
 import ServiceRequest from "@/models/ServiceRequest";
 import Enquiry from "@/models/Enquiry";
 import Appointment from "@/models/Appointment";
+import PartnerLead from "@/models/PartnerLead";
 import { AdminNav } from "@/components/admin/AdminNav";
+import { BrandWordmark } from "@/components/BrandWordmark";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +19,8 @@ export const dynamic = "force-dynamic";
  * still guard themselves independently — a layout protects the screen, not
  * the data behind it, and anyone can call an endpoint directly.
  *
- * Visually quieter than the storefront: lavender ground, white content
- * cards, purple reserved for the current nav item and primary actions.
+ * Visually quieter than the storefront: pale-blue ground, white content
+ * cards, navy reserved for the current nav item and primary actions.
  * Someone works in this panel for hours, and an interface that shouts is
  * exhausting by the third hour.
  */
@@ -36,10 +38,18 @@ export default async function AdminLayout({
   // whole reason an operator opens the panel — surfacing it in the sidebar
   // saves clicking into two screens to discover there's nothing to do.
   await connectDB();
-  const [openServices, newEnquiries, upcomingAppointments] = await Promise.all([
+  const [openServices, newEnquiries, upcomingAppointments, newPartners, newCareerSubmissions] = await Promise.all([
     ServiceRequest.countDocuments({ status: { $in: ["pending", "in_progress"] } }),
     Enquiry.countDocuments({ status: "new" }),
     Appointment.countDocuments({ status: "confirmed", startAt: { $gte: new Date() } }),
+    PartnerLead.countDocuments({ status: "new" }),
+    Enquiry.countDocuments({
+      status: "new",
+      $or: [
+        { requestType: { $in: ["innovation_submission", "career_application"] } },
+        { requestType: { $exists: false }, message: /^Product \/ innovation:/ },
+      ],
+    }),
   ]);
 
   return (
@@ -47,9 +57,7 @@ export default async function AdminLayout({
       <div className="mx-auto flex max-w-shell gap-6 px-4 py-6 sm:px-6">
         <aside className="hidden w-56 shrink-0 lg:block">
           <div className="sticky top-6">
-            <Link href="/" className="logotype block px-2">
-              TechBro
-            </Link>
+            <Link href="/" className="block px-2"><BrandWordmark className="items-start" /></Link>
             <p className="label-muted mt-1 px-2">Admin</p>
 
             <AdminNav
@@ -57,6 +65,8 @@ export default async function AdminLayout({
                 "/admin/services": openServices,
                 "/admin/enquiries": newEnquiries,
                 "/admin/appointments": upcomingAppointments,
+                "/admin/partners": newPartners,
+                "/admin/career-submissions": newCareerSubmissions,
               }}
             />
 
@@ -79,7 +89,7 @@ export default async function AdminLayout({
           <div className="mb-5 rounded-xl bg-paper p-3 shadow-card lg:hidden">
             <div className="flex items-center justify-between gap-3 px-2">
               <div>
-                <Link href="/" className="font-semibold text-ink">TechBro</Link>
+                <Link href="/" aria-label="TechBro home"><BrandWordmark className="items-start [&>span:first-child]:text-[1.35rem]" /></Link>
                 <span className="ml-2 text-xs font-medium uppercase tracking-wider text-accent-deep">Admin</span>
               </div>
               <Link href="/" className="text-xs font-medium text-accent-deep">View site</Link>
@@ -89,6 +99,8 @@ export default async function AdminLayout({
                 "/admin/services": openServices,
                 "/admin/enquiries": newEnquiries,
                 "/admin/appointments": upcomingAppointments,
+                "/admin/partners": newPartners,
+                "/admin/career-submissions": newCareerSubmissions,
               }}
               mobile
             />

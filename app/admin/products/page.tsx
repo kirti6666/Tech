@@ -8,21 +8,14 @@ import { ProductActions } from "@/components/admin/ProductActions";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Product list.
- *
- * The readiness warnings are the point of this screen. A published product
- * with no source archive looks completely normal in the catalogue and fails
- * only after someone has paid — so it gets flagged here, in red, rather than
- * discovered through a support email.
- */
+/** Product catalogue management and publishing status. */
 export default async function AdminProductsPage() {
   await connectDB();
 
   const [products, soldCounts] = await Promise.all([
     Product.find({})
       .select(
-        "title slug status price discountPrice platform sourceFileKey provenance provenanceDocKey updatedAt industry"
+        "title slug status price discountPrice platform provenance provenanceDocKey updatedAt industry"
       )
       .populate("industry", "name")
       .sort({ updatedAt: -1 })
@@ -45,7 +38,6 @@ export default async function AdminProductsPage() {
     price: number;
     discountPrice?: number;
     platform: Platform;
-    sourceFileKey?: string;
     provenance: string;
     provenanceDocKey?: string;
     industry?: { name: string };
@@ -86,10 +78,8 @@ export default async function AdminProductsPage() {
           </thead>
           <tbody>
             {rows.map((product) => {
-              const missingSource = !product.sourceFileKey;
               const missingDocs =
                 product.provenance !== "in_house" && !product.provenanceDocKey;
-              const broken = product.status === "published" && missingSource;
 
               return (
                 <tr key={product._id} className="border-t border-rule-soft">
@@ -104,16 +94,6 @@ export default async function AdminProductsPage() {
                       {product.industry?.name} ·{" "}
                       {PLATFORM_LABELS[product.platform]}
                     </p>
-                    {broken && (
-                      <p className="mt-1 text-xs font-medium text-red-700">
-                        Live with no source file — buyers get a failed download
-                      </p>
-                    )}
-                    {!broken && missingSource && (
-                      <p className="mt-1 text-xs text-ink-faint">
-                        No source file yet
-                      </p>
-                    )}
                     {missingDocs && (
                       <p className="mt-1 text-xs text-amber-700">
                         Right-to-resell documentation missing

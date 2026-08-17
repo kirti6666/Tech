@@ -81,8 +81,8 @@ export function ContactForm() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
         <Field
           label="Your name"
           value={values.name}
@@ -117,7 +117,7 @@ export function ContactForm() {
           <select
             value={values.budget}
             onChange={(e) => set("budget", e.target.value)}
-            className="mt-1 w-full border border-rule bg-paper px-3 py-2 text-sm"
+            className="field mt-1 h-10 text-sm"
           >
             <option value="">Not sure yet</option>
             <option value="under-1L">Under ₹1 lakh</option>
@@ -139,16 +139,14 @@ export function ContactForm() {
         <textarea
           value={values.message}
           onChange={(e) => set("message", e.target.value)}
-          rows={6}
+          rows={4}
           maxLength={5000}
           placeholder={
             isCustomWork
               ? "What the product needs to do, who uses it, and anything it has to connect to."
               : "How can we help?"
           }
-          className={`mt-1 w-full border bg-paper px-3 py-2 text-sm ${
-            errors.message ? "border-accent-deep" : "border-rule"
-          }`}
+          className={`field mt-1 resize-y py-2 text-sm ${errors.message ? "field-error" : ""}`}
         />
         {errors.message && (
           <span className="mt-1 block text-xs text-accent-deep">{errors.message}</span>
@@ -181,7 +179,7 @@ export function ContactForm() {
         type="button"
         onClick={submit}
         disabled={busy}
-        className="border border-accent-deep bg-accent-deep px-5 py-2.5 text-label font-medium uppercase tracking-[0.06em] text-white hover:bg-accent-deep hover:border-accent-deep disabled:opacity-60"
+        className="btn-primary h-11 w-full text-sm disabled:opacity-60 sm:w-auto"
       >
         {busy ? "Sending…" : "Send message"}
       </button>
@@ -213,9 +211,7 @@ function Field({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`mt-1 w-full border bg-paper px-3 py-2 text-sm ${
-          error ? "border-accent-deep" : "border-rule"
-        }`}
+        className={`field mt-1 h-10 text-sm ${error ? "field-error" : ""}`}
       />
       {error && <span className="mt-1 block text-xs text-accent-deep">{error}</span>}
     </label>

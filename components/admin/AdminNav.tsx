@@ -18,10 +18,13 @@ import { usePathname } from "next/navigation";
 const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/products", label: "Products" },
+  { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/taxonomy", label: "Industries & tech" },
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/services", label: "Service queue" },
   { href: "/admin/enquiries", label: "Enquiries" },
+  { href: "/admin/career-submissions", label: "Career submissions" },
+  { href: "/admin/partners", label: "Partner registrations" },
   { href: "/admin/appointments", label: "Appointments" },
   { href: "/admin/settings", label: "Settings" },
 ];

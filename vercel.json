@@ -11,6 +11,15 @@
     }
   ],
   "functions": {
+    "app/api/enquiries/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/partner-leads/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/appointments/route.ts": {
+      "maxDuration": 30
+    },
     "app/api/cron/backup/route.ts": {
       "maxDuration": 60
     },

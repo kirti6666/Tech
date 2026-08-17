@@ -2,9 +2,11 @@ import Link from "next/link";
 import { getAddons } from "@/lib/addons";
 import { getInvoiceSettings } from "@/lib/invoice/settings";
 import { AddonSettingsForm } from "@/components/admin/AddonSettingsForm";
-import { isStorageConfigured } from "@/lib/storage";
 import { isEncryptionConfigured } from "@/lib/crypto";
 import { isGitHubConfigured } from "@/lib/github";
+import { getSiteSettings } from "@/lib/site-settings";
+import { TrustedBrandsSettingsForm } from "@/components/admin/TrustedBrandsSettingsForm";
+import { HeroBannersSettingsForm } from "@/components/admin/HeroBannersSettingsForm";
 
 export const dynamic = "force-dynamic";
 
@@ -12,21 +14,19 @@ export const dynamic = "force-dynamic";
  * Settings, plus a readiness panel.
  *
  * The checks at the top exist because every one of them fails silently and
- * late. Storage missing means downloads 503 after someone has paid.
- * Encryption missing means deployment intake refuses to accept details.
+ * late. Encryption missing means deployment intake refuses to accept details.
  * pricesIncludeTax left on means you absorb 18% GST on every sale without
  * anything looking wrong. None of these surface anywhere else until a
  * customer hits them.
  */
 export default async function AdminSettingsPage() {
-  const [addons, invoice] = await Promise.all([getAddons(), getInvoiceSettings()]);
+  const [addons, invoice, siteSettings] = await Promise.all([
+    getAddons(),
+    getInvoiceSettings(),
+    getSiteSettings(),
+  ]);
 
   const checks = [
-    {
-      ok: isStorageConfigured(),
-      label: "Private file storage",
-      bad: "Downloads will fail after payment. Set the STORAGE_* variables.",
-    },
     {
       ok: isEncryptionConfigured(),
       label: "Credential encryption",
@@ -108,6 +108,9 @@ export default async function AdminSettingsPage() {
           .
         </p>
       </section>
+
+      <TrustedBrandsSettingsForm initial={siteSettings} />
+      <HeroBannersSettingsForm initial={siteSettings} />
 
       <h2 className="mb-3 font-display text-2xl font-light text-ink">
         Service pricing

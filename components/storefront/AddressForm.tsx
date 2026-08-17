@@ -44,21 +44,21 @@ export function AddressForm({ onSaved, onCancel }: AddressFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 border rounded-md p-4">
-      <div className="grid grid-cols-2 gap-3">
+    <form onSubmit={handleSubmit} className="space-y-2.5 rounded-xl border border-rule bg-white p-3 sm:p-4">
+      <div className="grid grid-cols-2 gap-2.5">
         <input
           required
           placeholder="Full name"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          className="rounded-md border px-3 py-2 text-sm"
+          className="field h-10 text-sm"
         />
         <input
           required
           placeholder="Phone number"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="rounded-md border px-3 py-2 text-sm"
+          className="field h-10 text-sm"
         />
       </div>
       <input
@@ -66,35 +66,35 @@ export function AddressForm({ onSaved, onCancel }: AddressFormProps) {
         placeholder="Address line 1"
         value={line1}
         onChange={(e) => setLine1(e.target.value)}
-        className="w-full rounded-md border px-3 py-2 text-sm"
+        className="field h-10 text-sm"
       />
       <input
         placeholder="Address line 2 (optional)"
         value={line2}
         onChange={(e) => setLine2(e.target.value)}
-        className="w-full rounded-md border px-3 py-2 text-sm"
+        className="field h-10 text-sm"
       />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         <input
           required
           placeholder="City"
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          className="rounded-md border px-3 py-2 text-sm"
+          className="field h-10 text-sm"
         />
         <input
           required
           placeholder="State"
           value={state}
           onChange={(e) => setState(e.target.value)}
-          className="rounded-md border px-3 py-2 text-sm"
+          className="field h-10 text-sm"
         />
         <input
           required
           placeholder="Pincode"
           value={pincode}
           onChange={(e) => setPincode(e.target.value)}
-          className="rounded-md border px-3 py-2 text-sm"
+          className="field col-span-2 h-10 text-sm sm:col-span-1"
         />
       </div>
       <label className="flex items-center gap-2 text-sm">
@@ -112,7 +112,7 @@ export function AddressForm({ onSaved, onCancel }: AddressFormProps) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm disabled:opacity-50"
+          className="btn-primary h-10 px-4 text-sm disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save Address"}
         </button>
@@ -120,7 +120,7 @@ export function AddressForm({ onSaved, onCancel }: AddressFormProps) {
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border px-4 py-2 text-sm"
+            className="btn-secondary h-10 px-4 text-sm"
           >
             Cancel
           </button>

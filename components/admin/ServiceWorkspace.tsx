@@ -216,7 +216,7 @@ export function ServiceWorkspace({
                   name="status"
                   checked={status === option.value}
                   onChange={() => setStatus(option.value)}
-                  className="mt-1 accent-violet-600"
+                  className="mt-1 accent-accent-deep"
                 />
                 <span>
                   <span className="block text-sm font-medium text-ink">

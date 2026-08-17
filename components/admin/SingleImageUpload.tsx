@@ -56,7 +56,7 @@ export function SingleImageUpload({ value, onChange, label, aspect = "square", h
       {value ? (
         <div className={`group relative overflow-hidden rounded-xl border border-rule bg-paper-alt shadow-card ${previewClass}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={value} alt="Product cover preview" className="h-full w-full object-cover object-top" />
+          <img src={value} alt="Image preview" className={`h-full w-full object-top ${aspect === "banner" ? "object-contain" : "object-cover"}`} />
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-end gap-2 bg-gradient-to-t from-black/75 via-black/35 to-transparent p-3 pt-10 opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
             <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-xs font-bold text-ink shadow"><Replace size={14} /> Replace{chooser}</label>
             <button type="button" onClick={() => onChange("")} className="inline-flex items-center gap-1.5 rounded-lg bg-red-700 px-3 py-2 text-xs font-bold text-white shadow"><Trash2 size={14} /> Remove</button>

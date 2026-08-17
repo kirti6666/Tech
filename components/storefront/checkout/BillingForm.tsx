@@ -59,7 +59,7 @@ export function BillingForm({
         <h2 className="mt-0.5 text-lg font-bold text-ink">Billing and invoice details</h2>
       </div>
 
-      <div className="grid gap-3 p-3.5 sm:grid-cols-2 sm:gap-4 sm:p-5">
+      <div className="grid gap-2.5 p-3 sm:grid-cols-2 sm:gap-3 sm:p-5">
         <Field
           label="Full name"
           error={errors.name}
@@ -103,7 +103,7 @@ export function BillingForm({
                 gstin: country === "IN" ? value.gstin : "",
               });
             }}
-            className="field mt-1"
+            className="field mt-1 h-10"
           >
             <option value="IN">India</option>
             <option value="US">United States</option>
@@ -152,7 +152,7 @@ export function BillingForm({
             <select
               value={value.state}
               onChange={(e) => set("state", e.target.value)}
-              className="field mt-1"
+              className="field mt-1 h-10"
             >
               <option value="">Select a state</option>
               {INDIAN_STATES.map((state) => (
@@ -229,7 +229,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         aria-invalid={Boolean(error)}
-        className={`field mt-1 ${error ? "field-error" : ""}`}
+        className={`field mt-1 h-10 ${error ? "field-error" : ""}`}
       />
       {error ? (
         <span className="mt-1 block text-xs text-accent-deep">{error}</span>

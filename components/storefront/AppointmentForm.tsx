@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CalendarDays, CheckCircle2, Clock3, Video } from "lucide-react";
-import { APPOINTMENT_TOPICS, type AppointmentTopic } from "@/lib/appointments";
+import { APPOINTMENT_TOPICS, dateKeyInIndia, type AppointmentTopic } from "@/lib/appointments";
 
 interface Slot {
   time: string;
@@ -10,21 +10,7 @@ interface Slot {
   available: boolean;
 }
 
-function dateInputValue(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function firstBookableDate(): Date {
-  const date = new Date();
-  date.setDate(date.getDate() + 1);
-  while (date.getDay() === 0 || date.getDay() === 6) date.setDate(date.getDate() + 1);
-  return date;
-}
-
-const initialDate = dateInputValue(firstBookableDate());
+const initialDate = dateKeyInIndia(new Date());
 
 export function AppointmentForm() {
   const [values, setValues] = useState({
@@ -51,10 +37,20 @@ export function AppointmentForm() {
 
   const minDate = initialDate;
   const maxDate = useMemo(() => {
-    const date = new Date();
-    date.setDate(date.getDate() + 30);
-    return dateInputValue(date);
+    return dateKeyInIndia(new Date(Date.now() + 6 * 24 * 60 * 60_000));
   }, []);
+  const preferredDates = useMemo(() => [
+    { label: "Today", offset: 0 },
+    { label: "Tomorrow", offset: 1 },
+    { label: "Day after", offset: 2 },
+  ].map(({ label, offset }) => {
+    const date = new Date(Date.now() + offset * 24 * 60 * 60_000);
+    return {
+      label,
+      value: dateKeyInIndia(date),
+      dateLabel: new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }).format(date),
+    };
+  }), []);
 
   useEffect(() => {
     let active = true;
@@ -128,7 +124,7 @@ export function AppointmentForm() {
       <section className="card overflow-hidden" aria-live="polite">
         <div className="bg-save/10 p-4 text-center sm:p-8">
           <CheckCircle2 className="mx-auto text-save" size={36} />
-          <h2 className="mt-2 font-display text-xl font-bold text-ink sm:text-2xl">Appointment confirmed</h2>
+          <h2 className="mt-2 font-display text-xl font-bold text-ink sm:text-2xl">Google Meet booked</h2>
           <p className="mt-2 text-sm text-ink-soft">
             {new Intl.DateTimeFormat("en-IN", {
               weekday: "long",
@@ -155,24 +151,35 @@ export function AppointmentForm() {
   return (
     <form onSubmit={submit} className="card overflow-hidden" noValidate>
       <div className="border-b border-rule-soft bg-paper-alt/60 px-3 py-3 sm:px-6 sm:py-4">
-        <h2 className="font-display text-xl font-bold text-ink">Choose your consultation</h2>
-        <p className="mt-0.5 text-xs text-ink-soft">30 minutes · Google Meet · Indian Standard Time</p>
+        <h2 className="font-display text-xl font-extrabold tracking-[-0.025em] text-ink sm:text-[1.4rem]">Schedule a Google Meet</h2>
+        <p className="mt-0.5 font-sans text-xs font-normal tracking-[0.01em] text-ink-soft">30 minutes · Google Meet · Indian Standard Time</p>
       </div>
 
-      <div className="space-y-3 p-3 sm:space-y-5 sm:p-6">
+      <div className="space-y-3 p-3 sm:space-y-4 sm:p-6">
         <label className="block">
           <span className="label-muted">Consultation type</span>
-          <select value={values.topic} onChange={(event) => set("topic", event.target.value)} className="field mt-1 text-base sm:mt-1.5 sm:text-sm">
+          <select value={values.topic} onChange={(event) => set("topic", event.target.value)} className="field mt-1 h-10 text-base sm:text-sm">
             {Object.entries(APPOINTMENT_TOPICS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
         </label>
 
+        <div>
+          <div className="flex items-center justify-between gap-3"><span className="label-muted">Preferred meeting days</span><span className="text-[10px] font-semibold text-ink-faint">Next 7 days only</span></div>
+          <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+            {preferredDates.map((date) => (
+              <button key={date.value} type="button" onClick={() => set("date", date.value)} className={`rounded-lg border px-2 py-2 text-center transition ${values.date === date.value ? "border-accent bg-accent text-white shadow-sm" : "border-blue-100 bg-blue-50/70 text-ink hover:border-accent"}`}>
+                <strong className="block text-[11px] sm:text-xs">{date.label}</strong><span className={`mt-0.5 block text-[10px] ${values.date === date.value ? "text-white/75" : "text-ink-faint"}`}>{date.dateLabel}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
           <label className="block">
-            <span className="label-muted">Date</span>
+            <span className="label-muted">Or choose another day</span>
             <span className="relative mt-1 block sm:mt-1.5">
               <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" size={16} />
-              <input type="date" min={minDate} max={maxDate} value={values.date} onChange={(event) => set("date", event.target.value)} className={`field pl-9 text-base sm:text-sm ${errors.date ? "field-error" : ""}`} />
+              <input type="date" min={minDate} max={maxDate} value={values.date} onChange={(event) => set("date", event.target.value)} className={`field h-10 pl-9 text-base sm:text-sm ${errors.date ? "field-error" : ""}`} />
             </span>
             {errors.date && <span className="mt-1 block text-xs text-accent-deep">{errors.date}</span>}
           </label>
@@ -184,7 +191,7 @@ export function AppointmentForm() {
                   {slot.label}
                 </button>
               ))}
-              {!loadingSlots && slots.every((slot) => !slot.available) && <span className="col-span-full py-3 text-xs text-ink-faint">No times available. Choose another weekday.</span>}
+              {!loadingSlots && slots.every((slot) => !slot.available) && <span className="col-span-full py-3 text-xs text-ink-faint">No times available. Choose another day within the next week.</span>}
             </div>
             {errors.time && <span className="mt-1 block text-xs text-accent-deep">{errors.time}</span>}
           </div>
@@ -197,13 +204,11 @@ export function AppointmentForm() {
           <Field label="Company (optional)" value={values.company} onChange={(value) => set("company", value)} autoComplete="organization" />
         </div>
 
-        <details className="rounded-lg border border-rule bg-paper-alt/40 px-3 py-2">
-          <summary className="cursor-pointer text-xs font-semibold text-ink">Add project details <span className="font-normal text-ink-faint">(optional)</span></summary>
-          <label className="mt-3 block">
-            <span className="label-muted">Anything we should prepare?</span>
-            <textarea value={values.notes} onChange={(event) => set("notes", event.target.value)} rows={2} maxLength={2000} placeholder="Product name, goals or questions" className={`field mt-1 resize-y text-base sm:text-sm ${errors.notes ? "field-error" : ""}`} />
-          </label>
-        </details>
+        <label className="block">
+          <span className="label-muted">Project details <span className="text-accent-deep">*</span></span>
+          <textarea required value={values.notes} onChange={(event) => set("notes", event.target.value)} rows={2} maxLength={2000} placeholder="Product, business goal and questions for the call" className={`field mt-1 resize-y py-2 text-base sm:text-sm ${errors.notes ? "field-error" : ""}`} />
+          {errors.notes && <span className="mt-1 block text-xs text-accent-deep">{errors.notes}</span>}
+        </label>
 
         <div aria-hidden="true" className="absolute -left-[9999px]">
           <label>Company website<input tabIndex={-1} autoComplete="off" value={values.company_website} onChange={(event) => set("company_website", event.target.value)} /></label>
@@ -212,7 +217,7 @@ export function AppointmentForm() {
         {formError && <p className="rounded-lg bg-accent-wash px-4 py-3 text-sm text-ink">{formError}</p>}
 
         <button type="submit" disabled={busy || loadingSlots || !values.time} className="btn-primary min-h-11 w-full text-base disabled:opacity-50 sm:min-h-12">
-          <Clock3 size={17} /> {busy ? "Booking…" : "Confirm appointment"}
+          <Clock3 size={17} /> {busy ? "Booking…" : "Confirm Google Meet"}
         </button>
         <p className="text-center text-[11px] leading-tight text-ink-faint">You and the TechBro team receive the Google Meet link and calendar file by email.</p>
       </div>
@@ -232,7 +237,7 @@ function Field({ label, value, onChange, error, type = "text", autoComplete, req
   return (
     <label className="block">
       <span className="label-muted">{label}{required && <span className="text-accent-deep"> *</span>}</span>
-      <input type={type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={autoComplete} className={`field mt-1 py-2 text-base sm:mt-1.5 sm:py-2.5 sm:text-sm ${error ? "field-error" : ""}`} />
+      <input type={type} value={value} onChange={(event) => onChange(event.target.value)} autoComplete={autoComplete} className={`field mt-1 h-10 text-base sm:text-sm ${error ? "field-error" : ""}`} />
       {error && <span className="mt-1 block text-xs text-accent-deep">{error}</span>}
     </label>
   );

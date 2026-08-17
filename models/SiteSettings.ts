@@ -117,6 +117,7 @@ const HomeSchema = new Schema(
     hero: { type: HeroSchema, default: () => ({}) },
     categoriesHeading: { type: String, default: "Shop by Category" },
     featuredHeading: { type: String, default: "Featured Products" },
+    trustedBrands: { type: [String], default: [] },
     highlights: { type: [HighlightSchema], default: [] },
     banners: { type: [BannerSchema], default: [] },
   },

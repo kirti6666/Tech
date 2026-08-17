@@ -32,11 +32,11 @@ export default function RefundPolicyPage() {
       eyebrow="Policy"
       title="Refund policy"
       updated="12 August 2026"
-      intro="Software delivered as source code can't be returned — once you have the files, you have them. This policy sets out the narrow circumstances where a refund is still fair, and what happens to your access when one is issued."
+      intro="Software delivered as source code can't be returned once it has been handed over. This policy explains when a refund is still fair and what happens to your licence when one is issued."
     >
-      <Clause title="Before you download">
+      <Clause title="Before source-code handover">
         <p>
-          If you have not yet downloaded the source archive, you may request a
+          If the source code has not yet been delivered to you, you may request a
           full refund within <strong className="font-medium text-ink">7 days</strong>{" "}
           of purchase, for any reason. We&apos;ll cancel the licence and refund
           the full amount including GST.
@@ -48,20 +48,20 @@ export default function RefundPolicyPage() {
         </p>
       </Clause>
 
-      <Clause title="After you download">
+      <Clause title="After source-code handover">
         <p>
-          Once the source archive has been downloaded, the purchase is
+          Once the source code has been delivered, the purchase is
           generally final. You hold a permanent copy of the product, and there
           is no way for us to take that back.
         </p>
-        <p>We will still refund a downloaded purchase where:</p>
+        <p>We will still consider a refund after delivery where:</p>
         <ul className="ml-5 list-disc space-y-1.5">
           <li>
             the product does not substantially match what the product page
             described, and we cannot correct it within 14 days;
           </li>
           <li>
-            the source archive is incomplete, corrupted, or won&apos;t install
+            the delivered source code is incomplete, corrupted, or won&apos;t install
             following the supplied guide, and we cannot fix it within 14 days;
           </li>
           <li>you were charged twice for the same order.</li>

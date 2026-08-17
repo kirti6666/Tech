@@ -19,8 +19,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const input = await req.json().catch(() => ({}));
+  const resourceType = input?.resourceType === "video" ? "video" : "image";
   const timestamp = Math.round(Date.now() / 1000);
-  const folder = "ecommerce-products";
+  const folder = resourceType === "video" ? "ecommerce-product-videos" : "ecommerce-products";
 
   const signature = cloudinary.utils.api_sign_request(
     { timestamp, folder },
@@ -33,5 +35,6 @@ export async function POST(req: NextRequest) {
     folder,
     apiKey: process.env.CLOUDINARY_API_KEY,
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    resourceType,
   });
 }

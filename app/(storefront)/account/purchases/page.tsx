@@ -5,7 +5,6 @@ import { connectDB } from "@/lib/db";
 import License from "@/models/License";
 import ServiceRequest from "@/models/ServiceRequest";
 import { getServerUser } from "@/lib/middleware/getServerUser";
-import { DownloadButton } from "@/components/storefront/account/DownloadButton";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +25,6 @@ interface LicenseRow {
   _id: string;
   key: string;
   status: "active" | "revoked";
-  downloadCount: number;
-  downloadLimit: number;
   createdAt: string;
   product: { _id: string; title: string; slug: string; documentationUrl?: string } | null;
   order: { _id: string; orderNumber: string } | null;
@@ -89,7 +86,7 @@ export default async function PurchasesPage() {
             Nothing here yet
           </p>
           <p className="mt-2 text-sm text-ink-soft">
-            Anything you buy shows up here with its licence key and download.
+            Anything you buy shows up here with its licence and delivery details.
           </p>
           <Link
             href="/shop"
@@ -135,12 +132,6 @@ export default async function PurchasesPage() {
                         {license.key}
                       </dd>
                     </div>
-                    <div className="flex flex-wrap items-baseline gap-x-3">
-                      <dt className="label-muted">Downloads used</dt>
-                      <dd className="tabular text-sm text-ink-soft tabular">
-                        {license.downloadCount} of {license.downloadLimit}
-                      </dd>
-                    </div>
                   </dl>
 
                   {license.product?.documentationUrl && (
@@ -155,15 +146,16 @@ export default async function PurchasesPage() {
                   )}
                 </div>
 
-                <div className="sm:text-right">
-                  <DownloadButton
-                    licenseKey={license.key}
-                    remaining={Math.max(
-                      0,
-                      license.downloadLimit - license.downloadCount
-                    )}
-                    revoked={license.status === "revoked"}
-                  />
+                <div className="sm:max-w-xs sm:text-right">
+                  {license.status === "revoked" ? (
+                    <p className="text-sm text-ink-soft">This licence has been revoked. Contact support if that looks wrong.</p>
+                  ) : (
+                    <>
+                      <span className="chip">Manual source delivery</span>
+                      <p className="mt-2 text-xs leading-relaxed text-ink-faint">The TechBro team will verify your order and share the source-code handover details directly with you.</p>
+                      <Link href="/contact" className="mt-2 inline-block text-xs font-semibold text-accent-deep hover:underline">Contact support</Link>
+                    </>
+                  )}
                 </div>
               </div>
             </li>

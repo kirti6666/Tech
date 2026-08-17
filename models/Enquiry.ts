@@ -17,6 +17,7 @@ export interface IEnquiry {
   company?: string;
   message: string;
   source: "contact" | "custom_work";
+  requestType?: "quick_call" | "innovation_submission" | "career_application";
   /** Which product page they were on, if any. Useful signal for follow-up. */
   productContext?: mongoose.Types.ObjectId;
   budget?: string;
@@ -38,6 +39,11 @@ const EnquirySchema = new Schema<IEnquiry>(
       type: String,
       enum: ["contact", "custom_work"],
       required: true,
+      index: true,
+    },
+    requestType: {
+      type: String,
+      enum: ["quick_call", "innovation_submission", "career_application"],
       index: true,
     },
     productContext: { type: Schema.Types.ObjectId, ref: "Product" },

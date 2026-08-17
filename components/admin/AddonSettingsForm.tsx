@@ -64,7 +64,7 @@ export function AddonSettingsForm({ initial }: { initial: AddonOffer[] }) {
                 type="checkbox"
                 checked={addon.isActive}
                 onChange={(e) => update(index, { isActive: e.target.checked })}
-                className="accent-violet-600"
+                className="accent-accent-deep"
               />
               Offered at checkout
             </label>

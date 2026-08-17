@@ -1,4 +1,4 @@
-import { Inter, Manrope } from "next/font/google";
+import { Inter, Manrope, Playfair_Display } from "next/font/google";
 
 /**
  * Two families, clearly divided.
@@ -31,4 +31,12 @@ export const bodyFont = Inter({
   display: "swap",
 });
 
-export const fontVariables = `${displayFont.variable} ${bodyFont.variable}`;
+export const brandFont = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700", "800", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-brand",
+  display: "swap",
+});
+
+export const fontVariables = `${displayFont.variable} ${bodyFont.variable} ${brandFont.variable}`;

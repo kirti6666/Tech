@@ -51,8 +51,13 @@ export async function POST(req: NextRequest) {
     }
     if (!phone) errors.phone = "Enter a phone number.";
     if (!(topic in APPOINTMENT_TOPICS)) errors.topic = "Choose a consultation type.";
-    if (!isBookableDate(date)) errors.date = "Choose a weekday within the next 30 days.";
+    if (!isBookableDate(date)) errors.date = "Choose a date within the next 7 days.";
     if (!isValidSlotTime(time)) errors.time = "Choose an available time.";
+    const requestedStart = appointmentStart(date, time);
+    if (isValidSlotTime(time) && requestedStart.getTime() < Date.now() + 15 * 60_000) {
+      errors.time = "Choose a future time at least 15 minutes from now.";
+    }
+    if (!notes) errors.notes = "Tell us briefly about your project or questions.";
     if (notes.length > 2000) errors.notes = "Keep the notes under 2,000 characters.";
 
     if (Object.keys(errors).length) {
@@ -71,7 +76,7 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
-    const startAt = appointmentStart(date, time);
+    const startAt = requestedStart;
     const endAt = appointmentEnd(startAt);
     let appointment;
     try {

@@ -37,7 +37,6 @@ export default async function AdminDashboard() {
     awaitingDetails,
     newEnquiries,
     recentOrders,
-    unpublishable,
   ] = await Promise.all([
     Order.aggregate([
       { $match: { paymentStatus: "paid" } },
@@ -67,12 +66,6 @@ export default async function AdminDashboard() {
       .sort({ paidAt: -1 })
       .limit(8)
       .lean(),
-    // Published products with no source file are the next delivery failure
-    // waiting to happen — someone can buy one right now.
-    Product.countDocuments({
-      status: "published",
-      $or: [{ sourceFileKey: { $exists: false } }, { sourceFileKey: "" }],
-    }),
   ]);
 
   const revenue = revenueAgg[0]?.total ?? 0;
@@ -87,7 +80,7 @@ export default async function AdminDashboard() {
         </h1>
       </header>
 
-      {(undelivered.length > 0 || unpublishable > 0) && (
+      {undelivered.length > 0 && (
         <div className="mb-8 space-y-3">
           {undelivered.length > 0 && (
             <Alert
@@ -113,14 +106,6 @@ export default async function AdminDashboard() {
                 )}
               </ul>
             </Alert>
-          )}
-
-          {unpublishable > 0 && (
-            <Alert
-              tone="warn"
-              title={`${unpublishable} published product${unpublishable === 1 ? " has" : "s have"} no source file`}
-              body="Anyone can buy these right now and the download will fail. Upload the archive or move them back to draft."
-            />
           )}
         </div>
       )}

@@ -5,6 +5,7 @@ import { settingsSchema } from "@/lib/validations/settings";
 import { requireAdmin } from "@/lib/middleware/requireAdmin";
 import { logAdminAction, getClientIp } from "@/lib/middleware/logAdminAction";
 import { getSiteSettings } from "@/lib/site-settings";
+import { revalidatePath } from "next/cache";
 
 /**
  * Force this route to run on the server for EVERY request.
@@ -65,6 +66,8 @@ export async function PUT(req: NextRequest) {
       },
       ipAddress: getClientIp(req),
     });
+
+    revalidatePath("/");
 
     const settings = await getSiteSettings();
     return NextResponse.json({ settings, saved: !!updated });

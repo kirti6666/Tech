@@ -80,8 +80,9 @@ export const settingsSchema = z.object({
         .default({}),
       categoriesHeading: z.string().default("Shop by Category"),
       featuredHeading: z.string().default("Featured Products"),
+      trustedBrands: z.array(z.string().trim().min(1).max(80)).max(30).default([]),
       highlights: z.array(highlightSchema).default([]),
-      banners: z.array(bannerSchema).default([]),
+      banners: z.array(bannerSchema).max(6).default([]),
     })
     .default({}),
   header: z

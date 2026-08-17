@@ -121,6 +121,19 @@ export function validateProduct(
       errors.githubRepo = "Use the owner/repo form, e.g. geoloide/clinic-system";
     }
   }
+  if (has("demo") && input.demo) {
+    for (const key of ["webUrl", "adminUrl", "appStoreUrl", "playStoreUrl", "workflowVideoUrl"] as const) {
+      const value = input.demo[key];
+      if (!value) continue;
+      try {
+        const url = new URL(value);
+        if (!['http:', 'https:'].includes(url.protocol)) throw new Error();
+      } catch {
+        errors.demo = `${key} must be a complete http:// or https:// URL`;
+        break;
+      }
+    }
+  }
 
   return errors;
 }

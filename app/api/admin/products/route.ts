@@ -10,9 +10,8 @@ import { validateProduct, type ProductInput } from "@/lib/validateProduct";
  * GET  /api/admin/products — list, including drafts
  * POST /api/admin/products — create
  *
- * Unlike the public route this returns the private fields, because the admin
- * form needs to show which source archive is attached and what the
- * provenance record says.
+ * Unlike the public route this returns private provenance fields so the
+ * admin can verify the right to sell each product.
  *
  * Slugs are generated once on create and never regenerated from the title.
  * A slug change silently 404s every link anyone has ever shared and throws
@@ -88,8 +87,7 @@ export async function POST(req: NextRequest) {
     }
 
     // New products always start as drafts, whatever the client asked for.
-    // Publishing needs the source file and the provenance paperwork, and
-    // neither exists at the moment of creation.
+    // This gives the admin a deliberate review step before anything is live.
     const product = await Product.create({ ...input, slug, status: "draft" });
 
     await logAdminAction({

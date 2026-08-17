@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const date = req.nextUrl.searchParams.get("date") ?? "";
   if (!isBookableDate(date)) {
     return NextResponse.json(
-      { error: "Choose a weekday within the next 30 days.", slots: [] },
+      { error: "Choose a date within the next 7 days.", slots: [] },
       { status: 400 }
     );
   }

@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PLATFORMS, PLATFORM_LABELS, TECH_CATEGORY_LABELS } from "@/types/catalog";
 import type { Platform, TechCategory, LicenseProvenance, ProductPackage } from "@/types/catalog";
-import { SourceFileUpload } from "@/components/admin/SourceFileUpload";
 import { ProductActions } from "@/components/admin/ProductActions";
 import { SingleImageUpload } from "@/components/admin/SingleImageUpload";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { SingleVideoUpload } from "@/components/admin/SingleVideoUpload";
+import { adminFetch } from "@/lib/adminFetch";
 
 interface Option {
   _id: string;
@@ -36,7 +37,15 @@ export interface ProductDraft {
   gstRate: number | "";
   features: string[];
   included: string[];
-  demo: { webUrl: string; adminUrl: string; adminUser: string; adminPass: string };
+  demo: {
+    webUrl: string;
+    adminUrl: string;
+    adminUser: string;
+    adminPass: string;
+    appStoreUrl: string;
+    playStoreUrl: string;
+    workflowVideoUrl: string;
+  };
   requirements: { server: string; language: string; database: string };
   documentationUrl: string;
   githubRepo: string;
@@ -45,17 +54,14 @@ export interface ProductDraft {
   seo: { metaTitle: string; metaDescription: string; ogImage: string };
   isFeatured: boolean;
   status: "draft" | "published";
-  sourceFileName?: string;
-  sourceFileSize?: number;
-  sourceFileKey?: string;
 }
 
 /**
  * The product editor.
  *
  * Grouped so the sequence matches how a product actually gets listed:
- * describe it, classify it, price it, prove you can sell it, attach the
- * file, then publish. Publishing sits last and on its own because it's the
+ * describe it, classify it, price it, prove you can sell it, then publish.
+ * Publishing sits last and on its own because it's the
  * only irreversible-feeling action on the page.
  *
  * Everything is one form with one save. A multi-step wizard would be tidier
@@ -80,6 +86,14 @@ export function ProductForm({
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  const initialTechNames = Object.fromEntries(
+    (Object.keys(TECH_CATEGORY_LABELS) as TechCategory[]).map((category) => [
+      category,
+      technologies.filter((tech) => tech.category === category && initial.techStack.includes(tech._id)).map((tech) => tech.name).join(", "),
+    ])
+  ) as Record<TechCategory, string>;
+  const [techNames, setTechNames] = useState<Record<TechCategory, string>>(initialTechNames);
+
   const isNew = !draft._id;
 
   function set<K extends keyof ProductDraft>(key: K, value: ProductDraft[K]) {
@@ -92,8 +106,32 @@ export function ProductForm({
     setErrors({});
     setFormError(null);
 
+    let resolvedTechStack: string[] = [];
+    try {
+      for (const category of Object.keys(TECH_CATEGORY_LABELS) as TechCategory[]) {
+        const names = techNames[category].split(",").map((name) => name.trim()).filter(Boolean);
+        for (const name of names) {
+          const existing = technologies.find((tech) => tech.category === category && tech.name.toLowerCase() === name.toLowerCase());
+          if (existing) {
+            resolvedTechStack.push(existing._id);
+            continue;
+          }
+          const created = await adminFetch("/api/admin/taxonomy?kind=technology", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, category }) });
+          const createdData = await created.json();
+          if (!created.ok) throw new Error(createdData.error ?? `Could not add ${name}.`);
+          resolvedTechStack.push(createdData.item._id);
+        }
+      }
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : "Could not prepare the technology stack.");
+      setBusy(false);
+      return;
+    }
+
+    resolvedTechStack = Array.from(new Set(resolvedTechStack));
     const body = {
       ...draft,
+      techStack: resolvedTechStack,
       status: nextStatus ?? draft.status,
       price: draft.price === "" ? undefined : Number(draft.price),
       discountPrice:
@@ -108,7 +146,7 @@ export function ProductForm({
     };
 
     try {
-      const response = await fetch(
+      const response = await adminFetch(
         isNew ? "/api/admin/products" : `/api/admin/products/${draft._id}`,
         {
           method: isNew ? "POST" : "PATCH",
@@ -137,17 +175,8 @@ export function ProductForm({
     }
   }
 
-  const techByCategory = new Map<TechCategory, TechOption[]>();
-  for (const tech of technologies) {
-    techByCategory.set(tech.category, [
-      ...(techByCategory.get(tech.category) ?? []),
-      tech,
-    ]);
-  }
-
   const canPublish = Boolean(
-    draft.sourceFileKey &&
-      (draft.provenance === "in_house" || draft.provenanceDocKey)
+    draft.provenance === "in_house" || draft.provenanceDocKey
   );
 
   return (
@@ -202,8 +231,8 @@ export function ProductForm({
         />
         <div>
           <p className="label-muted">Additional product images</p>
-          <p className="mb-3 mt-1 text-xs text-ink-faint">Optional gallery images. Choose up to six files from your device.</p>
-          <ImageUploader images={draft.images} onChange={(images) => set("images", images)} maxImages={6} />
+          <p className="mb-3 mt-1 text-xs text-ink-faint">Upload product screens from your device. Add or remove up to twelve images; 3–4 strong screenshots are recommended.</p>
+          <ImageUploader images={draft.images} onChange={(images) => set("images", images)} maxImages={12} />
         </div>
       </Section>
 
@@ -250,43 +279,10 @@ export function ProductForm({
 
         <div>
           <span className="label-muted">Technology stack</span>
-          <p className="mt-1 text-xs text-ink-faint">
-            Grouped by layer — this is what builds the spec table on the
-            product page, so tag every layer the product actually uses.
-          </p>
-          <div className="mt-3 space-y-4">
-            {Array.from(techByCategory.entries()).map(([category, items]) => (
-              <div key={category}>
-                <p className="label-muted mb-2">
-                  {TECH_CATEGORY_LABELS[category]}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {items.map((tech) => {
-                    const on = draft.techStack.includes(tech._id);
-                    return (
-                      <button
-                        key={tech._id}
-                        type="button"
-                        onClick={() =>
-                          set(
-                            "techStack",
-                            on
-                              ? draft.techStack.filter((id) => id !== tech._id)
-                              : [...draft.techStack, tech._id]
-                          )
-                        }
-                        className={
-                          on
-                            ? "rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-white"
-                            : "rounded-md bg-rule-soft px-3 py-1.5 text-xs font-medium text-ink-soft hover:bg-accent-mist hover:text-accent-deep"
-                        }
-                      >
-                        {tech.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+          <p className="mt-1 text-xs text-ink-faint">Type the technologies used in each layer, separated by commas. New names are created automatically when the product is saved.</p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {(Object.keys(TECH_CATEGORY_LABELS) as TechCategory[]).map((category) => (
+              <label key={category} className="block"><span className="label-muted">{TECH_CATEGORY_LABELS[category]}</span><input value={techNames[category]} onChange={(event) => { setTechNames({ ...techNames, [category]: event.target.value }); setSaved(false); }} placeholder={category === "frontend" ? "React, Next.js" : category === "backend" ? "Node.js, Laravel" : category === "database" ? "MongoDB, PostgreSQL" : category === "mobile" ? "Flutter, React Native" : "Docker, Redis, AI/ML"} className="field mt-1.5" /></label>
             ))}
           </div>
         </div>
@@ -346,10 +342,10 @@ export function ProductForm({
                 <Field label="Short description" value={item.description} onChange={(value) => update({ description: value })} />
                 <Field label="Platforms" value={item.platforms.join(", ")} onChange={(value) => update({ platforms: value.split(",").map((part) => part.trim()).filter(Boolean) })} hint="Comma-separated, e.g. Web, Android, iOS, AI" />
                 <ListField label="Package-specific benefits" values={item.features} onChange={(features) => update({ features })} placeholder="Complete source code" />
-                <label className="flex items-center gap-2 text-sm font-medium text-ink"><input type="checkbox" checked={Boolean(item.isPopular)} onChange={(event) => set("packages", draft.packages.map((entry, i) => ({ ...entry, isPopular: event.target.checked && i === index })))} className="h-4 w-4 accent-[#8B5CF6]" />Mark as most popular</label>
+                <label className="flex items-center gap-2 text-sm font-medium text-ink"><input type="checkbox" checked={Boolean(item.isPopular)} onChange={(event) => set("packages", draft.packages.map((entry, i) => ({ ...entry, isPopular: event.target.checked && i === index })))} className="h-4 w-4 accent-accent-deep" />Mark as most popular</label>
               </div>;
             })}
-            {!draft.packages.length && <p className="rounded-lg border border-dashed border-rule p-4 text-sm text-ink-soft">No packages yet. The product's offer price will be used until you add them.</p>}
+            {!draft.packages.length && <p className="rounded-lg border border-dashed border-rule p-4 text-sm text-ink-soft">No packages yet. The product’s offer price will be used until you add them.</p>}
           </div>
         </div>
       </Section>
@@ -376,6 +372,34 @@ export function ProductForm({
             value={draft.demo.adminPass}
             onChange={(v) => set("demo", { ...draft.demo, adminPass: v })}
           />
+          <Field
+            label="Google Play link"
+            value={draft.demo.playStoreUrl}
+            onChange={(v) => set("demo", { ...draft.demo, playStoreUrl: v })}
+            hint="Optional. Shown only when provided."
+          />
+          <Field
+            label="Apple App Store link"
+            value={draft.demo.appStoreUrl}
+            onChange={(v) => set("demo", { ...draft.demo, appStoreUrl: v })}
+            hint="Optional. Shown only when provided."
+          />
+          <div className="sm:col-span-2">
+            <SingleVideoUpload
+              label="Workflow video"
+              value={draft.demo.workflowVideoUrl}
+              onChange={(v) => set("demo", { ...draft.demo, workflowVideoUrl: v })}
+              hint="Upload from your phone or computer. The file is saved securely in your Cloudinary product-video folder."
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <Field
+              label="Or paste a workflow video URL"
+              value={draft.demo.workflowVideoUrl}
+              onChange={(v) => set("demo", { ...draft.demo, workflowVideoUrl: v })}
+              hint="Optional alternative: YouTube, Vimeo or a direct MP4/WebM link."
+            />
+          </div>
         </div>
         <Callout tone="warn">
           These are shown publicly on the product page, in full. Use throwaway
@@ -451,21 +475,6 @@ export function ProductForm({
           onChange={(v) => set("documentationUrl", v)}
         />
 
-        {draft._id && (
-          <SourceFileUpload
-            productId={draft._id}
-            fileName={draft.sourceFileName}
-            fileSize={draft.sourceFileSize}
-            onUploaded={(key, name, size) =>
-              setDraft({
-                ...draft,
-                sourceFileKey: key,
-                sourceFileName: name,
-                sourceFileSize: size,
-              })
-            }
-          />
-        )}
       </Section>
 
       <Section title="Search listing">
@@ -489,7 +498,7 @@ export function ProductForm({
             type="checkbox"
             checked={draft.isFeatured}
             onChange={(e) => set("isFeatured", e.target.checked)}
-            className="h-4 w-4 accent-[#8B5CF6]"
+            className="h-4 w-4 accent-accent-deep"
           />
           Feature on the homepage
         </label>
@@ -536,10 +545,8 @@ export function ProductForm({
 
         <span className="text-xs text-ink-faint">
           {isNew
-            ? "Save first — the source file can be attached once the product exists."
-            : !draft.sourceFileKey
-              ? "Upload the source archive before publishing."
-              : draft.provenance !== "in_house" && !draft.provenanceDocKey
+            ? "Save the product first, then publish it."
+            : draft.provenance !== "in_house" && !draft.provenanceDocKey
                 ? "Right-to-resell documentation is required before publishing."
                 : draft.status === "published"
                   ? `Live in the catalogue${licenseCount ? ` · ${licenseCount} sold` : ""}`

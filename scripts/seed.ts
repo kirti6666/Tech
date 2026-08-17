@@ -74,6 +74,8 @@ const TECHNOLOGIES: { name: string; category: TechCategory }[] = [
   { name: "PostgreSQL", category: "database" },
   { name: "Firebase", category: "database" },
   { name: "WordPress", category: "other" },
+  { name: "Shopify", category: "other" },
+  { name: "WooCommerce", category: "other" },
   { name: "AI/ML", category: "other" },
   { name: "Blockchain", category: "other" },
   { name: "Redis", category: "other" },
