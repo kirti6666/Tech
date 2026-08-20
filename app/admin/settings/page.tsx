@@ -7,6 +7,7 @@ import { isGitHubConfigured } from "@/lib/github";
 import { getSiteSettings } from "@/lib/site-settings";
 import { TrustedBrandsSettingsForm } from "@/components/admin/TrustedBrandsSettingsForm";
 import { HeroBannersSettingsForm } from "@/components/admin/HeroBannersSettingsForm";
+import { SocialLinksSettingsForm } from "@/components/admin/SocialLinksSettingsForm";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +112,7 @@ export default async function AdminSettingsPage() {
 
       <TrustedBrandsSettingsForm initial={siteSettings} />
       <HeroBannersSettingsForm initial={siteSettings} />
+      <SocialLinksSettingsForm initial={siteSettings} />
 
       <h2 className="mb-3 font-display text-2xl font-light text-ink">
         Service pricing

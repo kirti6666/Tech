@@ -23,7 +23,7 @@ export function CartLink({ variant = "text" }: { variant?: "text" | "icon" }) {
       <Link
         href="/cart"
         aria-label={`Shopping cart${count > 0 ? ` with ${count} item${count === 1 ? "" : "s"}` : ""}`}
-        className="relative grid h-10 w-10 place-items-center rounded-lg text-ink transition hover:bg-accent-mist hover:text-accent-deep"
+        className="relative grid h-10 w-10 place-items-center rounded-lg text-ink"
       >
         <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2.2} aria-hidden="true" />
         {count > 0 && (
@@ -36,7 +36,7 @@ export function CartLink({ variant = "text" }: { variant?: "text" | "icon" }) {
   }
 
   return (
-    <Link href="/cart" className="hover:underline">
+    <Link href="/cart">
       Cart{count > 0 ? ` (${count})` : ""}
     </Link>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, Clock3, Video } from "lucide-react";
+import { CheckCircle2, Clock3, Video } from "lucide-react";
 import { APPOINTMENT_TOPICS, dateKeyInIndia, type AppointmentTopic } from "@/lib/appointments";
 
 interface Slot {
@@ -149,13 +149,13 @@ export function AppointmentForm() {
   }
 
   return (
-    <form onSubmit={submit} className="card overflow-hidden" noValidate>
+    <form onSubmit={submit} className="editorial-form card overflow-hidden" noValidate>
       <div className="border-b border-rule-soft bg-paper-alt/60 px-3 py-3 sm:px-6 sm:py-4">
         <h2 className="font-display text-xl font-extrabold tracking-[-0.025em] text-ink sm:text-[1.4rem]">Schedule a Google Meet</h2>
         <p className="mt-0.5 font-sans text-xs font-normal tracking-[0.01em] text-ink-soft">30 minutes · Google Meet · Indian Standard Time</p>
       </div>
 
-      <div className="space-y-3 p-3 sm:space-y-4 sm:p-6">
+      <div className="space-y-3 p-3 sm:p-5 lg:p-5">
         <label className="block">
           <span className="label-muted">Consultation type</span>
           <select value={values.topic} onChange={(event) => set("topic", event.target.value)} className="field mt-1 h-10 text-base sm:text-sm">
@@ -174,24 +174,23 @@ export function AppointmentForm() {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+        <div className="grid gap-3 md:grid-cols-2 md:gap-4">
           <label className="block">
             <span className="label-muted">Or choose another day</span>
-            <span className="relative mt-1 block sm:mt-1.5">
-              <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" size={16} />
-              <input type="date" min={minDate} max={maxDate} value={values.date} onChange={(event) => set("date", event.target.value)} className={`field h-10 pl-9 text-base sm:text-sm ${errors.date ? "field-error" : ""}`} />
-            </span>
+            <input type="date" min={minDate} max={maxDate} value={values.date} onChange={(event) => set("date", event.target.value)} className={`field mt-1 h-10 min-w-0 text-sm ${errors.date ? "field-error" : ""}`} />
             {errors.date && <span className="mt-1 block text-xs text-accent-deep">{errors.date}</span>}
           </label>
           <div>
-            <span className="label-muted">Available time</span>
-            <div className="mt-1 grid grid-cols-4 gap-1.5 sm:mt-1.5 sm:grid-cols-3 sm:gap-2" role="radiogroup" aria-label="Available appointment times">
-              {loadingSlots ? <span className="col-span-full py-3 text-xs text-ink-faint">Loading times…</span> : slots.filter((slot) => slot.available).map((slot) => (
-                <button key={slot.time} type="button" role="radio" aria-checked={values.time === slot.time} onClick={() => set("time", slot.time)} className={`min-h-9 rounded-lg border px-1 py-1.5 text-[11px] font-semibold transition sm:px-2 sm:py-2 sm:text-xs ${values.time === slot.time ? "border-accent bg-accent text-white" : "border-rule bg-white text-ink hover:border-accent"}`}>
-                  {slot.label}
-                </button>
-              ))}
-              {!loadingSlots && slots.every((slot) => !slot.available) && <span className="col-span-full py-3 text-xs text-ink-faint">No times available. Choose another day within the next week.</span>}
+            <div className="flex items-center justify-between gap-2"><span className="label-muted">Available time</span>{slots.filter((slot) => slot.available).length > 16 && <span className="text-[9px] font-medium text-ink-faint">Scroll for more</span>}</div>
+            <div className="mt-1 overflow-hidden rounded-xl border border-rule-soft bg-paper-alt/55 p-1.5 sm:mt-1.5" role="radiogroup" aria-label="Available appointment times">
+              <div className="hide-scrollbar grid max-h-40 grid-cols-4 gap-1.5 overflow-y-auto overscroll-contain pr-0.5 sm:max-h-44">
+                {loadingSlots ? <span className="col-span-full py-4 text-center text-xs text-ink-faint">Loading times…</span> : slots.filter((slot) => slot.available).map((slot) => (
+                  <button key={slot.time} type="button" role="radio" aria-checked={values.time === slot.time} onClick={() => set("time", slot.time)} className={`min-h-8 whitespace-nowrap rounded-lg border px-1 py-1.5 text-[10px] font-bold transition sm:text-[11px] ${values.time === slot.time ? "border-accent bg-accent text-white shadow-sm" : "border-rule bg-white text-ink hover:border-accent hover:bg-blue-50"}`}>
+                    {slot.label}
+                  </button>
+                ))}
+                {!loadingSlots && slots.every((slot) => !slot.available) && <span className="col-span-full px-2 py-4 text-center text-xs leading-5 text-ink-faint">No times available. Choose another day within the next week.</span>}
+              </div>
             </div>
             {errors.time && <span className="mt-1 block text-xs text-accent-deep">{errors.time}</span>}
           </div>
@@ -206,7 +205,7 @@ export function AppointmentForm() {
 
         <label className="block">
           <span className="label-muted">Project details <span className="text-accent-deep">*</span></span>
-          <textarea required value={values.notes} onChange={(event) => set("notes", event.target.value)} rows={2} maxLength={2000} placeholder="Product, business goal and questions for the call" className={`field mt-1 resize-y py-2 text-base sm:text-sm ${errors.notes ? "field-error" : ""}`} />
+          <textarea required value={values.notes} onChange={(event) => set("notes", event.target.value)} rows={2} maxLength={2000} placeholder="Product, business goal and questions for the call" className={`field mt-1 !min-h-14 resize-y py-2 text-sm ${errors.notes ? "field-error" : ""}`} />
           {errors.notes && <span className="mt-1 block text-xs text-accent-deep">{errors.notes}</span>}
         </label>
 

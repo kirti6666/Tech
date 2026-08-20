@@ -84,13 +84,13 @@ export function QuickCallForm() {
           <p className="mt-3 font-sans text-sm font-normal leading-6 text-blue-100/75">Share your number and what you want to discuss. Your details go directly to the admin Gmail inbox.</p>
         </div>
 
-        <form onSubmit={submit} noValidate className="space-y-2.5 bg-white p-3 sm:p-5">
+        <form onSubmit={submit} noValidate className="editorial-form space-y-2.5 bg-white p-3 sm:p-4 lg:p-5">
           <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
             <QuickField label="Name" value={values.name} onChange={(value) => set("name", value)} error={errors.name} autoComplete="name" />
             <QuickField label="Phone" type="tel" value={values.phone} onChange={(value) => set("phone", value)} error={errors.phone} autoComplete="tel" />
           </div>
           <QuickField label="Email" type="email" value={values.email} onChange={(value) => set("email", value)} error={errors.email} autoComplete="email" />
-          <label className="block"><span className="label-muted">Discussion details <span className="text-accent-deep">*</span></span><textarea rows={2} maxLength={5000} value={values.details} onChange={(event) => set("details", event.target.value)} placeholder="What would you like to discuss?" className={`field mt-1 resize-y py-2 text-base sm:text-sm ${errors.details ? "field-error" : ""}`} />{errors.details && <span className="mt-1 block text-xs text-accent-deep">{errors.details}</span>}</label>
+          <label className="block"><span className="label-muted">Discussion details <span className="text-accent-deep">*</span></span><textarea rows={2} maxLength={5000} value={values.details} onChange={(event) => set("details", event.target.value)} placeholder="What would you like to discuss?" className={`field mt-1 !min-h-14 resize-y py-2 text-sm ${errors.details ? "field-error" : ""}`} />{errors.details && <span className="mt-1 block text-xs text-accent-deep">{errors.details}</span>}</label>
           {message && <p className="rounded-lg bg-accent-wash px-3 py-2 text-xs text-ink">{message}</p>}
           <button type="submit" disabled={busy} className="btn-primary min-h-11 w-full text-sm disabled:opacity-50"><Send className="h-4 w-4" aria-hidden="true" />{busy ? "Sending…" : "Request a quick call"}</button>
         </form>

@@ -72,7 +72,7 @@ export function PartnerRegistrationForm() {
   }
 
   return (
-    <form onSubmit={submit} noValidate className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-lift">
+    <form onSubmit={submit} noValidate className="editorial-form overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-lift">
       <header className="flex items-start justify-between gap-4 border-b border-blue-100 bg-gradient-to-r from-blue-50/90 to-white px-3.5 py-3 sm:px-5">
         <div><p className="label-muted">Partner application</p><h2 className="mt-1 font-display text-xl font-black leading-tight tracking-[-0.025em] text-ink sm:text-2xl">Tell us how you want to work with TechBro</h2></div>
         <span className="hidden rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700 sm:inline-flex">Free to apply</span>

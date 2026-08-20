@@ -7,6 +7,7 @@ import { requireAdmin } from "@/lib/middleware/requireAdmin";
 import { logAdminAction, getClientIp } from "@/lib/middleware/logAdminAction";
 import { recountTaxonomy } from "@/lib/recountTaxonomy";
 import { TECH_CATEGORIES } from "@/types/catalog";
+import { revalidatePath } from "next/cache";
 
 /**
  * One route for both taxonomies, keyed on ?kind=industry|technology.
@@ -29,6 +30,12 @@ function slugify(text: string) {
 
 function modelFor(kind: string | null) {
   return kind === "technology" ? Technology : Industry;
+}
+
+function refreshTaxonomyPages(slug?: string, kind?: string | null) {
+  revalidatePath("/");
+  revalidatePath("/shop");
+  if (slug) revalidatePath(kind === "technology" ? `/technology/${slug}` : `/industry/${slug}`);
 }
 
 export async function GET(req: NextRequest) {
@@ -98,6 +105,8 @@ export async function POST(req: NextRequest) {
       ipAddress: getClientIp(req),
     });
 
+    refreshTaxonomyPages(doc.slug, kind);
+
     return NextResponse.json({ item: doc }, { status: 201 });
   } catch (error) {
     console.error("POST /api/admin/taxonomy failed:", error);
@@ -149,6 +158,8 @@ export async function PATCH(req: NextRequest) {
       ipAddress: getClientIp(req),
     });
 
+    refreshTaxonomyPages(doc.slug, kind);
+
     return NextResponse.json({ item: doc });
   } catch (error) {
     console.error("PATCH /api/admin/taxonomy failed:", error);
@@ -185,7 +196,10 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    await modelFor(kind).deleteOne({ _id: id });
+    const deleted = (await modelFor(kind)
+      .findOneAndDelete({ _id: id })
+      .select("slug")
+      .lean()) as unknown as { slug?: string } | null;
 
     await logAdminAction({
       adminId: admin.id,
@@ -194,6 +208,8 @@ export async function DELETE(req: NextRequest) {
       targetId: id,
       ipAddress: getClientIp(req),
     });
+
+    refreshTaxonomyPages(deleted?.slug, kind);
 
     return NextResponse.json({ ok: true });
   } catch (error) {

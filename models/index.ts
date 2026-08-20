@@ -13,6 +13,9 @@ export { default as Invoice } from "./Invoice";
 export { default as InvoiceSettings } from "./InvoiceSettings";
 export { default as AuditLog } from "./AuditLog";
 export { default as SiteSettings } from "./SiteSettings";
+export { default as FreeResource } from "./FreeResource";
+export { default as BlogPost } from "./BlogPost";
+export { default as Faq } from "./Faq";
 
 // Removed from the retail original: Category (→ Industry), Address (billing
 // now lives on the order), Review (Phase 2).

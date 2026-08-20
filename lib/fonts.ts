@@ -1,4 +1,4 @@
-import { Inter, Manrope, Playfair_Display } from "next/font/google";
+import { Inter, Manrope, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 
 /**
  * Two families, clearly divided.
@@ -39,4 +39,11 @@ export const brandFont = Playfair_Display({
   display: "swap",
 });
 
-export const fontVariables = `${displayFont.variable} ${bodyFont.variable} ${brandFont.variable}`;
+export const labelFont = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["600"],
+  variable: "--font-label",
+  display: "swap",
+});
+
+export const fontVariables = `${displayFont.variable} ${bodyFont.variable} ${brandFont.variable} ${labelFont.variable}`;

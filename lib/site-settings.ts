@@ -83,6 +83,7 @@ export interface SiteSettingsData {
   social: {
     facebook: string;
     instagram: string;
+    linkedin: string;
     twitter: string;
     youtube: string;
   };
@@ -180,6 +181,7 @@ export const DEFAULT_SETTINGS: SiteSettingsData = {
   social: {
     facebook: "",
     instagram: "",
+    linkedin: "",
     twitter: "",
     youtube: "",
   },

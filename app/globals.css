@@ -9,6 +9,71 @@
   --primary-foreground: #ffffff;
 }
 
+/* Keep the homepage sections visually connected on smaller screens. Several
+   sections own their spacing on an inner shell while others own it on the
+   section itself, so both cases are covered without changing other pages. */
+.home-page > section {
+  border-top-width: 0 !important;
+  border-bottom-width: 0 !important;
+}
+
+.home-page #best-sellers-heading + p {
+  display: none;
+}
+
+.home-page section[aria-labelledby="featured-heading"] > div > p:last-child,
+.home-page section[aria-labelledby="industries-heading"] > div > p[class*="sm:hidden"],
+.home-page section[aria-labelledby="best-sellers-heading"] > div > p:last-child {
+  display: flex;
+  width: 2rem;
+  height: 1.25rem;
+  margin-top: 0.5rem;
+  margin-inline: auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 55%);
+  color: rgb(13 47 100 / 38%);
+  font-size: 0;
+  box-shadow: inset 0 0 0 1px rgb(191 219 254 / 55%);
+}
+
+.home-page section[aria-labelledby="featured-heading"] > div > p:last-child::before,
+.home-page section[aria-labelledby="industries-heading"] > div > p[class*="sm:hidden"]::before,
+.home-page section[aria-labelledby="best-sellers-heading"] > div > p:last-child::before {
+  content: "";
+  width: 1rem;
+  height: 1rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230d2f64' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m18 8 4 4-4 4'/%3E%3Cpath d='M2 12h20'/%3E%3Cpath d='m6 8-4 4 4 4'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: 0.55;
+}
+
+@media (max-width: 639px) {
+  .home-page > section[class*=" py-"],
+  .home-page > section > [class*=" py-"] {
+    padding-block: 1.5rem !important;
+  }
+
+  .home-page
+    section[aria-labelledby="industries-heading"]
+    div:has(> div > #platforms-heading) {
+    margin-top: 1.5rem !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .home-page > section[class*=" py-"],
+  .home-page > section > [class*=" py-"] {
+    padding-block: 2.25rem !important;
+  }
+
+  .home-page
+    section[aria-labelledby="industries-heading"]
+    div:has(> div > #platforms-heading) {
+    margin-top: 2rem !important;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -114,15 +179,16 @@ body {
     @apply font-display text-[1.4rem] font-extrabold leading-none tracking-tight text-ink;
   }
 
-  /* Section eyebrow. Inter, not the serif — at 12px Cormorant's hairlines
-     disappear. Uppercase with generous tracking does the elegant work
-     instead. */
+  /* Small section eyebrows use Plus Jakarta Sans SemiBold for a clean,
+     contemporary shape that remains legible with uppercase tracking. */
   .label {
+    font-family: var(--font-label), var(--font-body), system-ui, sans-serif;
     @apply text-label font-semibold uppercase tracking-[0.08em] text-accent-deep;
   }
 
   .label-muted {
-    @apply text-label font-medium uppercase tracking-[0.06em] text-ink-faint;
+    font-family: var(--font-label), var(--font-body), system-ui, sans-serif;
+    @apply text-label font-semibold uppercase tracking-[0.06em] text-ink-faint;
   }
 
   /* Card: white on lavender, soft wide shadow, no visible border by default.
@@ -179,5 +245,36 @@ body {
 
   .field-error {
     @apply ring-2 ring-red-300 focus:ring-red-400;
+  }
+
+  /* Customer forms share one restrained, editorial treatment: readable
+     labels, underline inputs and a single dark action. Search/filter bars
+     and dense admin forms intentionally keep their task-specific styling. */
+  .editorial-form {
+    @apply font-sans;
+  }
+
+  .editorial-form .label-muted {
+    @apply text-[11px] font-semibold normal-case tracking-normal text-ink;
+  }
+
+  .editorial-form .field {
+    @apply rounded-none border-0 border-b border-ink/30 bg-transparent px-0 py-2 text-sm shadow-none ring-0 placeholder:text-ink-ghost focus:border-ink focus:bg-transparent focus:ring-0;
+  }
+
+  .editorial-form textarea.field {
+    @apply min-h-14 leading-5;
+  }
+
+  .editorial-form .field-error {
+    @apply border-red-500 ring-0 focus:border-red-600 focus:ring-0;
+  }
+
+  .editorial-form .btn-primary {
+    @apply gap-2 rounded-full bg-ink px-6 shadow-none ring-0 hover:bg-black hover:brightness-100;
+  }
+
+  .editorial-form .btn-secondary {
+    @apply gap-2 rounded-full bg-white px-6 text-ink shadow-none ring-1 ring-ink/30 hover:bg-paper-alt hover:ring-ink;
   }
 }

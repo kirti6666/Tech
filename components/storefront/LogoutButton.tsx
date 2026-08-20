@@ -17,7 +17,7 @@ export function LogoutButton({ className }: { className?: string }) {
   }
 
   return (
-    <button onClick={handleLogout} className={className ?? "hover:underline text-sm"}>
+    <button onClick={handleLogout} className={className ?? "text-sm"}>
       Logout
     </button>
   );

@@ -108,6 +108,7 @@ export const settingsSchema = z.object({
     .object({
       facebook: z.string().default(""),
       instagram: z.string().default(""),
+      linkedin: z.string().default(""),
       twitter: z.string().default(""),
       youtube: z.string().default(""),
     })

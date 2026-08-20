@@ -153,6 +153,7 @@ const SocialSchema = new Schema(
   {
     facebook: { type: String, default: "" },
     instagram: { type: String, default: "" },
+    linkedin: { type: String, default: "" },
     twitter: { type: String, default: "" },
     youtube: { type: String, default: "" },
   },

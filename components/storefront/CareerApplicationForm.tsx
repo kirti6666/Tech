@@ -27,7 +27,7 @@ export function CareerApplicationForm() {
 
   if (sent) return <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-7 text-center"><CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600" /><h2 className="mt-3 text-2xl font-extrabold text-ink">Application received</h2><p className="mt-2 text-sm text-ink-soft">We’ll review your details and contact you by email if there is a suitable opportunity.</p></div>;
 
-  return <form id="apply" onSubmit={submit} className="rounded-2xl border border-rule bg-white p-4 shadow-lift sm:p-6">
+  return <form id="apply" onSubmit={submit} className="editorial-form rounded-2xl border border-rule bg-white p-4 shadow-lift sm:p-6">
     <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-accent-deep">Join the team</p><h2 className="mt-1 text-2xl font-extrabold tracking-tight text-ink">Tell us about yourself</h2>
     <div className="mt-5 grid gap-3 sm:grid-cols-2">
       <Field label="Full name" required value={values.name} onChange={(v) => set("name", v)} />

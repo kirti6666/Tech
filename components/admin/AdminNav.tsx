@@ -18,6 +18,9 @@ import { usePathname } from "next/navigation";
 const NAV = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/products", label: "Products" },
+  { href: "/admin/freebies", label: "Free resources" },
+  { href: "/admin/blog", label: "Blog" },
+  { href: "/admin/faqs", label: "FAQs" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/taxonomy", label: "Industries & tech" },
   { href: "/admin/orders", label: "Orders" },

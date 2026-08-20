@@ -44,7 +44,7 @@ export function AddressForm({ onSaved, onCancel }: AddressFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2.5 rounded-xl border border-rule bg-white p-3 sm:p-4">
+    <form onSubmit={handleSubmit} className="editorial-form space-y-2.5 rounded-xl border border-rule bg-white p-3 sm:p-4">
       <div className="grid grid-cols-2 gap-2.5">
         <input
           required

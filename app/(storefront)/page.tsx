@@ -10,7 +10,6 @@ import {
   Building2,
   CalendarCheck,
   Check,
-  CircleHelp,
   Clock3,
   Crown,
   GraduationCap,
@@ -40,10 +39,15 @@ import {
   type CatalogueProduct,
 } from "@/lib/catalogue";
 import { HomeCatalogueSearch } from "@/components/storefront/HomeCatalogueSearch";
+import { HomeHeroSlider } from "@/components/storefront/HomeHeroSlider";
 import { TrustedCompaniesMarquee } from "@/components/storefront/TrustedCompaniesMarquee";
 import { getSiteSettings } from "@/lib/site-settings";
 import Testimonial from "@/models/Testimonial";
 import { SampleTestimonials, type PublicTestimonial } from "@/components/storefront/SampleTestimonials";
+import { BlogCard } from "@/components/storefront/BlogCard";
+import { getPublishedBlogPosts } from "@/lib/blog-posts";
+import Industry from "@/models/Industry";
+import Technology from "@/models/Technology";
 
 export const revalidate = 900;
 
@@ -54,7 +58,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const EXPLORE_INDUSTRIES: {
+const INDUSTRY_FALLBACK: {
   name: string;
   href: string;
   icon: LucideIcon;
@@ -68,7 +72,7 @@ const EXPLORE_INDUSTRIES: {
   { name: "Food", href: "/industry/food-restaurant", icon: UtensilsCrossed },
 ];
 
-const EXPLORE_PLATFORMS: {
+const PLATFORM_FALLBACK: {
   name: string;
   type: string;
   href: string;
@@ -83,6 +87,40 @@ const EXPLORE_PLATFORMS: {
   { name: "Flutter", type: "Mobile", href: "/shop?tech=flutter", icon: Smartphone },
   { name: "Custom Dev", type: "Tailored", href: "/shop?platform=web_app", icon: Code2 },
 ];
+
+const INDUSTRY_ICONS: Record<string, LucideIcon> = {
+  "ai": Bot,
+  "ai-ml": Bot,
+  healthcare: HeartPulse,
+  retail: ShoppingBag,
+  "e-commerce": ShoppingBag,
+  education: GraduationCap,
+  edtech: GraduationCap,
+  fintech: Banknote,
+  "real-estate": Building2,
+  food: UtensilsCrossed,
+  "food-restaurant": UtensilsCrossed,
+};
+
+const TECHNOLOGY_ICONS: Record<string, LucideIcon> = {
+  wordpress: PanelsTopLeft,
+  shopify: Store,
+  woocommerce: ShoppingCart,
+  "next-js": Triangle,
+  nextjs: Triangle,
+  react: Atom,
+  laravel: Braces,
+  flutter: Smartphone,
+};
+
+const TECHNOLOGY_LABELS: Record<string, string> = {
+  frontend: "Frontend",
+  backend: "Backend",
+  database: "Database",
+  mobile: "Mobile",
+  devops: "DevOps",
+  other: "Technology",
+};
 
 const LAUNCH_STEPS = [
   { day: "Day 1", title: "Choose", body: "Pick a product or share your idea." },
@@ -229,16 +267,40 @@ function shortSummary(value: string) {
 export default async function HomePage() {
   let products: CatalogueProduct[] = [];
   let testimonials: PublicTestimonial[] = [];
-  const settings = await getSiteSettings();
+  let exploreIndustries = INDUSTRY_FALLBACK;
+  let explorePlatforms = PLATFORM_FALLBACK;
+  const [settings, blogPosts] = await Promise.all([
+    getSiteSettings(),
+    getPublishedBlogPosts().then((posts) => posts.slice(0, 3)),
+  ]);
 
   try {
     await connectDB();
-    const [catalogue, testimonialDocs] = await Promise.all([
+    const [catalogue, testimonialDocs, industryDocs, technologyDocs] = await Promise.all([
       queryCatalogue(parseCatalogueParams({ sort: "newest" })),
       Testimonial.find({ scope: "home", status: "published" }).select("name avatar role rating comment").sort({ displayOrder: 1, createdAt: -1 }).limit(3).lean(),
+      Industry.find({ isActive: true }).select("name slug").sort({ displayOrder: 1, name: 1 }).lean(),
+      Technology.find({ isActive: true }).select("name slug category").sort({ displayOrder: 1, name: 1 }).lean(),
     ]);
     products = catalogue.products.slice(0, 10);
     testimonials = JSON.parse(JSON.stringify(testimonialDocs)) as PublicTestimonial[];
+
+    if (industryDocs.length) {
+      exploreIndustries = industryDocs.map((industry) => ({
+        name: industry.name,
+        href: `/industry/${industry.slug}`,
+        icon: INDUSTRY_ICONS[industry.slug] ?? Building2,
+      }));
+    }
+
+    if (technologyDocs.length) {
+      explorePlatforms = technologyDocs.map((technology) => ({
+        name: technology.name,
+        type: TECHNOLOGY_LABELS[technology.category] ?? "Technology",
+        href: `/technology/${technology.slug}`,
+        icon: TECHNOLOGY_ICONS[technology.slug] ?? Code2,
+      }));
+    }
   } catch {
     // Keep the marketing page available during a temporary catalogue outage.
     // Product rows populate automatically when MongoDB recovers.
@@ -247,15 +309,20 @@ export default async function HomePage() {
   const featuredProducts = products.length > 0 ? products : FEATURED_FALLBACK;
 
   return (
-    <main className="overflow-hidden bg-white">
-      <section className="relative isolate overflow-hidden border-b border-blue-100 px-4 pb-10 pt-9 text-center sm:px-6 sm:pb-16 sm:pt-14 lg:pb-20 lg:pt-20">
+    <main className="home-page overflow-hidden bg-white">
+      <section className="relative isolate overflow-hidden border-b border-blue-100 px-4 pb-8 pt-4 text-center sm:px-6 sm:pb-10 sm:pt-6 lg:pb-20 lg:pt-20">
         <div className="pointer-events-none absolute inset-0 -z-20 bg-[linear-gradient(to_bottom,#ffffff_0%,#ffffff_56%,#eff6ff_100%)]" />
         <div className="pointer-events-none absolute inset-0 -z-10 opacity-40 [background-image:linear-gradient(to_right,#dbeafe_1px,transparent_1px),linear-gradient(to_bottom,#dbeafe_1px,transparent_1px)] [background-size:36px_36px] [mask-image:linear-gradient(to_bottom,black,transparent_78%)]" />
         <div className="relative mx-auto max-w-5xl">
-          <p className="label">Websites · Apps · Business software</p>
-          <h1 className="mx-auto mt-4 max-w-5xl font-display text-[2.45rem] font-extrabold leading-[1.02] tracking-[-0.05em] text-ink sm:mt-5 sm:text-6xl lg:text-[4.15rem]">Build smarter. Launch faster.<span className="block bg-gradient-to-r from-accent-deep via-blue-600 to-blue-400 bg-clip-text text-transparent">Own it completely.</span></h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-ink-soft sm:mt-5 sm:text-lg sm:leading-8">Start with proven software, shape it around your business and launch with complete source-code ownership.</p>
-          <div className="mt-6 flex flex-row items-center justify-center gap-2.5 sm:mt-7 sm:gap-3"><Link href="/shop" className="btn-primary min-h-12 rounded-xl px-4 text-xs sm:px-8 sm:text-sm">Explore products <ArrowRight className="ml-1.5 h-4 w-4" /></Link><Link href="/contact?type=custom" className="btn-secondary min-h-12 rounded-xl bg-white/90 px-4 text-xs backdrop-blur sm:px-8 sm:text-sm">Build custom web</Link><Link href="#catalogue-search" aria-label="Search the product catalogue" title="Search products" className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-rule bg-white/90 text-accent-deep shadow-card backdrop-blur transition hover:-translate-y-0.5 hover:border-accent hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><Search className="h-5 w-5" /></Link></div>
+          <div className="overflow-hidden rounded-[10px] bg-white shadow-card ring-1 ring-blue-100 lg:hidden">
+            <HomeHeroSlider slides={settings.home.banners} />
+          </div>
+          <div className="hidden lg:block">
+            <p className="label">Websites · Apps · Business software</p>
+            <h1 className="mx-auto mt-4 max-w-5xl font-display text-[2.45rem] font-extrabold leading-[1.02] tracking-[-0.05em] text-ink sm:mt-5 sm:text-6xl lg:text-[4.15rem]">Build smarter. Launch faster.<span className="block bg-gradient-to-r from-accent-deep via-blue-600 to-blue-400 bg-clip-text text-transparent">Own it completely.</span></h1>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-ink-soft sm:mt-5 sm:text-lg sm:leading-8">Start with proven software, shape it around your business and launch with complete source-code ownership.</p>
+          </div>
+          <div className="mt-4 flex flex-row items-center justify-center gap-2.5 sm:mt-5 sm:gap-3 lg:mt-7"><Link href="/shop" className="btn-primary min-h-12 rounded-xl px-4 text-xs sm:px-8 sm:text-sm">Explore products <ArrowRight className="ml-1.5 h-4 w-4" /></Link><Link href="/contact?type=custom" className="btn-secondary min-h-12 rounded-xl bg-white/90 px-4 text-xs backdrop-blur sm:px-8 sm:text-sm">Build custom web</Link><Link href="#catalogue-search" aria-label="Search the product catalogue" title="Search products" className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-rule bg-white/90 text-accent-deep shadow-card backdrop-blur transition hover:-translate-y-0.5 hover:border-accent hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><Search className="h-5 w-5" /></Link></div>
           <div className="mx-auto mt-7 grid max-w-3xl grid-cols-3 overflow-hidden rounded-2xl bg-white/90 shadow-card ring-1 ring-blue-100 backdrop-blur sm:mt-10">{[{ icon: Zap, title: "Launch faster", detail: "Ready-made foundation" },{ icon: ShieldCheck, title: "Own the code", detail: "Complete handover" },{ icon: Rocket, title: "Grow freely", detail: "No platform lock-in" }].map((benefit, index) => { const Icon = benefit.icon; return <div key={benefit.title} className={`px-2 py-4 sm:px-6 sm:py-5 ${index > 0 ? "border-l border-blue-100" : ""}`}><Icon className="mx-auto h-5 w-5 text-accent-deep sm:h-6 sm:w-6" /><p className="mt-2 text-[11px] font-extrabold text-ink sm:text-sm">{benefit.title}</p><p className="mt-0.5 hidden text-xs text-ink-faint sm:block">{benefit.detail}</p></div>; })}</div>
         </div>
       </section>
@@ -266,7 +333,7 @@ export default async function HomePage() {
 
       <section className="border-y border-rule-soft bg-accent-mist/35" aria-labelledby="featured-heading"><div className="mx-auto max-w-shell px-4 py-14 sm:px-6 sm:py-20"><div className="mb-7 flex items-end justify-between gap-4"><div><p className="label">Ready to launch</p><h2 id="featured-heading" className="mt-1 font-brand text-3xl font-black tracking-[-0.03em] text-ink sm:text-4xl">Featured products</h2></div><Link href="/shop" className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-accent-deep hover:underline">View all <ArrowRight className="h-4 w-4" /></Link></div><div className="hide-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:gap-5 sm:px-6">{featuredProducts.map((product) => { const image = product.thumbnail || product.images?.[0]; return <Link key={product._id} href={`/product/${product.slug}`} className="group min-w-[15.5rem] max-w-[15.5rem] snap-start overflow-hidden rounded-3xl bg-white/90 shadow-card ring-1 ring-white/80 backdrop-blur-sm transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-lift sm:min-w-[17.5rem] sm:max-w-[17.5rem]"><div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-blue-50 via-white to-accent-wash">{image ? <img src={image} alt="" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035]" /> : <div className="grid h-full place-items-center"><MonitorSmartphone className="h-16 w-16 text-accent/80" /></div>}<span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-accent-deep shadow-sm backdrop-blur">{product.industry?.name ?? "Software"}</span></div><div className="p-4"><h3 className="line-clamp-1 text-base font-bold text-ink">{product.title}</h3><p className="mt-1.5 min-h-10 text-sm leading-5 text-ink-soft">{shortSummary(product.shortDescription)}</p><div className="mt-4 flex items-baseline gap-2"><span className="font-display text-xl font-extrabold text-ink tabular">{formatPrice(product.effectivePrice)}</span>{product.discountPrice && product.discountPrice < product.price ? <span className="text-xs text-ink-faint line-through tabular">{formatPrice(product.price)}</span> : null}</div></div></Link>; })}</div><p className="mt-1 text-xs text-ink-faint">Swipe or scroll to explore more products.</p></div></section>
 
-      <section className="bg-white py-14 sm:py-16" aria-labelledby="industries-heading"><div className="mx-auto max-w-shell px-4 sm:px-6"><div className="mb-7 flex items-end justify-between gap-4"><div><p className="label">Solutions for your sector</p><h2 id="industries-heading" className="mt-1 font-brand text-3xl font-black tracking-[-0.03em] text-ink sm:text-4xl">Explore by Industry</h2></div><Link href="/shop" className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-accent-deep hover:underline">View all <ArrowRight className="h-4 w-4" /></Link></div><div className="rounded-3xl bg-gradient-to-br from-paper-alt to-accent-wash/70 p-2 ring-1 ring-rule sm:p-5"><div className="hide-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 sm:gap-3">{EXPLORE_INDUSTRIES.map((industry) => { const Icon = industry.icon; return <Link key={industry.name} href={industry.href} className="group min-w-[calc((100%_-_1.5rem)/4)] flex-1 snap-start rounded-xl bg-white px-1 py-3 text-center shadow-card ring-1 ring-rule-soft transition hover:-translate-y-1 hover:shadow-lift sm:min-w-[7.5rem] sm:rounded-2xl sm:px-3 sm:py-5"><span className="mx-auto grid h-8 w-8 place-items-center rounded-lg bg-accent-cta text-white shadow-accent sm:h-11 sm:w-11 sm:rounded-xl"><Icon className="h-4 w-4 sm:h-5 sm:w-5" /></span><span className="mt-2 block text-[9px] font-bold leading-tight text-ink sm:mt-3 sm:text-sm">{industry.name}</span></Link>; })}</div></div><p className="mt-2 text-xs text-ink-faint sm:hidden">Swipe to explore industries.</p><div className="mb-7 mt-12 flex items-end justify-between gap-4 sm:mt-14"><div><p className="label">Built on the tools you trust</p><h2 id="platforms-heading" className="mt-1 font-brand text-3xl font-black tracking-[-0.03em] text-ink sm:text-4xl">Explore by Platform</h2><p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">Choose a familiar platform or framework and see products built with that technology.</p></div><Link href="/shop" className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-accent-deep hover:underline">View all <ArrowRight className="h-4 w-4" /></Link></div><div className="rounded-3xl border border-[#c8d8ec] bg-[#f8fbff] p-2 shadow-card sm:p-5" aria-labelledby="platforms-heading"><div className="hide-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 sm:gap-3">{EXPLORE_PLATFORMS.map((platform) => { const Icon = platform.icon; return <Link key={platform.name} href={platform.href} className="group flex min-h-24 min-w-[calc((100%_-_1.5rem)/4)] flex-1 snap-start flex-col items-center justify-center rounded-xl border border-[#d8e3f0] bg-gradient-to-b from-white to-[#edf3fa] px-1 py-2.5 text-center transition hover:-translate-y-1 hover:border-[#9eb7d5] hover:shadow-lift sm:min-h-32 sm:min-w-[7.5rem] sm:rounded-2xl sm:px-2 sm:py-4"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#0d2f64] text-white shadow-sm transition group-hover:bg-[#071a3d] sm:h-11 sm:w-11 sm:rounded-xl"><Icon className="h-3.5 w-3.5 sm:h-5 sm:w-5" /></span><strong className="mt-2 block text-[9px] leading-tight text-ink sm:mt-3 sm:text-sm">{platform.name}</strong><span className="mt-1 hidden text-[10px] font-semibold uppercase tracking-[0.08em] text-accent-deep/65 sm:block">{platform.type}</span></Link>; })}</div></div><p className="mt-2 text-xs text-ink-faint sm:hidden">Swipe to explore platforms.</p></div></section>
+      <section className="bg-white py-14 sm:py-16" aria-labelledby="industries-heading"><div className="mx-auto max-w-shell px-4 sm:px-6"><div className="mb-7 flex items-end justify-between gap-4"><div><p className="label">Solutions for your sector</p><h2 id="industries-heading" className="mt-1 font-brand text-3xl font-black tracking-[-0.03em] text-ink sm:text-4xl">Explore by Industry</h2></div><Link href="/shop" className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-accent-deep hover:underline">View all <ArrowRight className="h-4 w-4" /></Link></div><div className="hide-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto px-px pb-2 sm:gap-3">{exploreIndustries.map((industry) => { const Icon = industry.icon; return <Link key={industry.name} href={industry.href} className="group min-w-[calc((100%_-_1.5rem)/4)] flex-1 snap-start rounded-xl bg-white px-1 py-3 text-center shadow-card ring-1 ring-rule-soft transition hover:-translate-y-1 hover:shadow-lift sm:min-w-[7.5rem] sm:rounded-2xl sm:px-3 sm:py-5"><span className="mx-auto grid h-8 w-8 place-items-center rounded-lg bg-accent-cta text-white shadow-accent sm:h-11 sm:w-11 sm:rounded-xl"><Icon className="h-4 w-4 sm:h-5 sm:w-5" /></span><span className="mt-2 block text-[9px] font-bold leading-tight text-ink sm:mt-3 sm:text-sm">{industry.name}</span></Link>; })}</div><p className="mt-2 text-xs text-ink-faint sm:hidden">Swipe to explore industries.</p><div className="mb-7 mt-12 flex items-end justify-between gap-4 sm:mt-14"><div><p className="label">Built on the tools you trust</p><h2 id="platforms-heading" className="mt-1 font-brand text-3xl font-black tracking-[-0.03em] text-ink sm:text-4xl">Explore by Platform</h2></div><Link href="/shop" className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-accent-deep hover:underline">View all <ArrowRight className="h-4 w-4" /></Link></div><div className="hide-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto px-px pb-2 sm:gap-3" aria-labelledby="platforms-heading">{explorePlatforms.map((platform) => { const Icon = platform.icon; return <Link key={platform.name} href={platform.href} className="group flex min-h-24 min-w-[calc((100%_-_1.5rem)/4)] flex-1 snap-start flex-col items-center justify-center rounded-xl border border-[#d8e3f0] bg-gradient-to-b from-white to-[#edf3fa] px-1 py-2.5 text-center transition hover:-translate-y-1 hover:border-[#9eb7d5] hover:shadow-lift sm:min-h-32 sm:min-w-[7.5rem] sm:rounded-2xl sm:px-2 sm:py-4"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#0d2f64] text-white shadow-sm transition group-hover:bg-[#071a3d] sm:h-11 sm:w-11 sm:rounded-xl"><Icon className="h-3.5 w-3.5 sm:h-5 sm:w-5" /></span><strong className="mt-2 block text-[9px] leading-tight text-ink sm:mt-3 sm:text-sm">{platform.name}</strong><span className="mt-1 hidden text-[10px] font-semibold uppercase tracking-[0.08em] text-accent-deep/65 sm:block">{platform.type}</span></Link>; })}</div><p className="mt-2 text-xs text-ink-faint sm:hidden">Swipe to explore platforms.</p></div></section>
 
       <section className="mx-auto max-w-shell px-4 py-12 sm:px-6 sm:py-16">
         <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#071a3d] via-[#0d2a5e] to-[#123b78] px-5 py-7 text-white shadow-lift ring-1 ring-blue-900/20 sm:px-8 sm:py-9 lg:px-10">
@@ -364,7 +431,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="mt-8 overflow-hidden rounded-[2rem] bg-white shadow-lift ring-1 ring-slate-200 sm:mt-10 lg:grid lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="mt-8 overflow-hidden rounded-[10px] bg-white shadow-lift ring-1 ring-slate-200 sm:mt-10 lg:grid lg:grid-cols-[0.9fr_1.1fr]">
             <div className="p-6 text-center sm:p-8 lg:p-10">
               <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-accent-deep">Example transformation</p>
               <h3 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
@@ -425,7 +492,7 @@ export default async function HomePage() {
       </section>
 
       <section className="bg-white px-4 pb-8 pt-0 sm:px-6 sm:pb-10" aria-labelledby="trust-heading">
-        <div className="relative mx-auto max-w-shell overflow-hidden rounded-[1.75rem] bg-[#071a3d] px-5 py-8 text-center shadow-[0_24px_70px_-36px_rgba(7,26,61,0.75)] ring-1 ring-[#071a3d] sm:px-10 sm:py-11 lg:px-12">
+        <div className="relative mx-auto max-w-shell overflow-hidden rounded-[10px] bg-[#071a3d] px-5 py-8 text-center shadow-[0_24px_70px_-36px_rgba(7,26,61,0.75)] ring-1 ring-[#071a3d] sm:px-10 sm:py-11 lg:px-12">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
           <div className="relative">
@@ -526,46 +593,20 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white px-4 pb-8 pt-12 sm:px-6 sm:py-16" aria-labelledby="resources-heading">
+      <section className="bg-white px-4 py-10 sm:px-6 sm:py-14 lg:py-16" aria-labelledby="home-blog-heading">
         <div className="mx-auto max-w-shell">
-          <div className="flex items-end justify-between gap-4">
+          <div className="flex items-end justify-between gap-5">
             <div>
-              <p className="label">Helpful resources</p>
-              <h2 id="resources-heading" className="mt-2 font-brand text-3xl font-black tracking-[-0.03em] text-ink sm:text-4xl">Learn before you buy</h2>
+              <p className="label">Ideas for your next launch</p>
+              <h2 id="home-blog-heading" className="mt-1.5 font-brand text-[1.75rem] font-black leading-tight tracking-[-0.035em] text-ink sm:text-4xl">Latest from the blog</h2>
             </div>
-            <Link href="/faq" className="hidden items-center gap-1 text-sm font-bold text-accent transition hover:text-accent-hover sm:inline-flex">
-              View all answers <ArrowRight className="h-4 w-4" />
+            <Link href="/blog" className="group inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border border-rule bg-white px-3 text-xs font-bold text-ink shadow-sm transition hover:border-blue-200 hover:text-accent sm:px-4 sm:text-sm">
+              View all <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
 
-          <div className="mt-7 grid gap-3 lg:grid-cols-[1.35fr_0.65fr] lg:gap-5">
-            <Link href="/licence" className="group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-br from-[#071a3d] via-[#0d2a5e] to-[#123b78] p-6 text-white shadow-lift ring-1 ring-blue-900/20 transition hover:-translate-y-1 sm:min-h-72 sm:p-8">
-              <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full border border-blue-200/10" />
-              <div className="pointer-events-none absolute right-8 top-8 grid h-14 w-14 place-items-center rounded-2xl bg-white/10 text-blue-100 ring-1 ring-white/15 transition group-hover:bg-white/15">
-                <ShieldCheck className="h-7 w-7" aria-hidden="true" />
-              </div>
-              <span className="relative w-fit rounded-full bg-white/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-blue-100 ring-1 ring-white/10">Ownership guide</span>
-              <h3 className="relative mt-4 max-w-xl font-display text-2xl font-extrabold leading-tight sm:text-3xl">What owning the source code means for your business</h3>
-              <p className="relative mt-3 max-w-xl text-sm leading-relaxed text-blue-100/70">Understand your licence, what you can customise and how complete ownership protects your next stage of growth.</p>
-              <span className="relative mt-5 inline-flex items-center gap-2 text-sm font-bold text-white">Read the licence guide <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span>
-            </Link>
-
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
-              <Link href="/faq" className="group flex min-w-0 flex-col justify-between rounded-2xl border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-4 shadow-card transition hover:-translate-y-1 hover:shadow-lift sm:p-6">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-blue-100 text-accent sm:h-10 sm:w-10"><CircleHelp className="h-5 w-5" aria-hidden="true" /></span>
-                <div className="mt-6">
-                  <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-accent sm:text-[10px]">Buying guide</p>
-                  <h3 className="mt-2 font-display text-sm font-extrabold leading-snug text-ink sm:text-lg">Questions to ask before choosing software</h3>
-                </div>
-              </Link>
-              <Link href="/book-consultation" className="group flex min-w-0 flex-col justify-between rounded-2xl border border-blue-100 bg-gradient-to-br from-white to-blue-50 p-4 shadow-card transition hover:-translate-y-1 hover:shadow-lift sm:p-6">
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-blue-100 text-accent sm:h-10 sm:w-10"><Rocket className="h-5 w-5" aria-hidden="true" /></span>
-                <div className="mt-6">
-                  <p className="text-[9px] font-extrabold uppercase tracking-[0.14em] text-accent sm:text-[10px]">Launch planning</p>
-                  <h3 className="mt-2 font-display text-sm font-extrabold leading-snug text-ink sm:text-lg">Plan the right starting point with us</h3>
-                </div>
-              </Link>
-            </div>
+          <div className="mt-5 grid gap-3 sm:mt-7 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+            {blogPosts.map((post) => <BlogCard key={post._id} post={post} />)}
           </div>
         </div>
       </section>
@@ -597,7 +638,7 @@ export default async function HomePage() {
       </section>
 
       <section className="bg-white px-4 py-8 sm:px-6 sm:py-12" aria-labelledby="recommendation-heading">
-        <div className="relative mx-auto max-w-shell overflow-hidden rounded-[2rem] border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-blue-100 px-5 py-9 text-center shadow-lift sm:px-10 sm:py-12">
+        <div className="relative mx-auto max-w-shell overflow-hidden rounded-[10px] border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-blue-100 px-5 py-9 text-center shadow-lift sm:px-10 sm:py-12">
           <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-blue-300/20 blur-3xl" />
           <p className="label">Free product guidance</p>
           <h2 id="recommendation-heading" className="relative mx-auto mt-2 max-w-2xl font-brand text-3xl font-black tracking-[-0.03em] text-ink sm:text-4xl">Not sure which product fits your business?</h2>

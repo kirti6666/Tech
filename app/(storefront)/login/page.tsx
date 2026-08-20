@@ -43,7 +43,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm rounded-2xl border border-blue-100 bg-white p-4 shadow-lift sm:p-6">
         <div className="text-center"><p className="label-muted">Welcome back</p><h1 className="mt-1 font-display text-2xl font-black tracking-tight text-ink">Log in to TechBro</h1><p className="mt-1.5 text-sm text-ink-soft">Access your purchases, services and account.</p></div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-3">
+        <form onSubmit={handleSubmit} className="editorial-form mt-5 space-y-3">
           <div>
             <label className="label-muted mb-1 block">Email</label>
             <input

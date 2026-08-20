@@ -54,6 +54,7 @@ const config: Config = {
         brand: ["var(--font-brand)", "Georgia", "serif"],
         display: ["var(--font-display)", "Arial", "sans-serif"],
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        label: ["var(--font-label)", "var(--font-body)", "system-ui", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       fontSize: {
@@ -63,9 +64,10 @@ const config: Config = {
         sm: "0.375rem",
         DEFAULT: "0.5rem",
         md: "0.625rem",
-        lg: "0.875rem",
-        xl: "1.125rem",
-        "2xl": "1.5rem",
+        lg: "0.625rem",
+        xl: "0.625rem",
+        "2xl": "0.625rem",
+        "3xl": "0.625rem",
       },
       boxShadow: {
         card: "0 1px 2px rgba(8,26,58,0.03), 0 12px 34px -22px rgba(8,26,58,0.22)",

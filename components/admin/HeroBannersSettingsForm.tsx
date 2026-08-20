@@ -76,7 +76,7 @@ export function HeroBannersSettingsForm({ initial }: { initial: SiteSettingsData
       <div className="panel-head flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-ink">Homepage hero banners</h2>
-          <p className="mt-1 max-w-2xl text-xs leading-relaxed text-ink-faint">Upload wide banner images from your gallery. Drag-free ordering controls determine the slide order. Recommended ratio: 3:1, up to 6 banners.</p>
+          <p className="mt-1 max-w-2xl text-xs leading-relaxed text-ink-faint">Upload hero images from your gallery. The order below controls the mobile and tablet slideshow. Recommended ratio: 3:2, up to 6 images.</p>
         </div>
         <button type="button" disabled={banners.length >= 6} onClick={() => setBanners((current) => [...current, { ...EMPTY_BANNER }])} className="btn-secondary min-h-9 gap-1.5 px-3 py-2 text-xs">
           <Plus size={14} /> Add banner
